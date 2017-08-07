@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\xunit.runner.visualstudio.2.2.0\build\net20\xunit.runner.visualstudio.props" Condition="Exists('..\packages\xunit.runner.visualstudio.2.2.0\build\net20\xunit.runner.visualstudio.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{47097FF2-2CAA-4433-B9BD-CE1629DA3F31}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PizzaMaster</RootNamespace>
+    <AssemblyName>PizzaMaster</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EventFlow, Version=0.48.2937.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EventFlow.0.48.2937\lib\net451\EventFlow.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.abstractions.2.0.1\lib\net35\xunit.abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.assert, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.assert.2.2.0\lib\netstandard1.1\xunit.assert.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.core, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.extensibility.core.2.2.0\lib\netstandard1.1\xunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.execution.desktop, Version=2.2.0.3545, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\xunit.extensibility.execution.2.2.0\lib\net452\xunit.execution.desktop.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Bestellungen\Artikel.cs" />
+    <Compile Include="Bestellungen\ArtikelId.cs" />
+    <Compile Include="Bestellungen\BestellungAggregate.cs" />
+    <Compile Include="Bestellungen\BestellungId.cs" />
+    <Compile Include="Bestellungen\Commands\ArtikelHinzufuegenCommand.cs" />
+    <Compile Include="Bestellungen\Commands\ArtikelHinzufuegenCommandHandler.cs" />
+    <Compile Include="Bestellungen\Commands\BestellungAbschliessenCommand.cs" />
+    <Compile Include="Bestellungen\Commands\BestellungBeginnenCommand.cs" />
+    <Compile Include="Bestellungen\Commands\BestellungBeginnenCommandHandler.cs" />
+    <Compile Include="Bestellungen\Events\BezahlungAngefordertEvent.cs" />
+    <Compile Include="Bestellungen\Events\ArtikelHinzugefuegtEvent.cs" />
+    <Compile Include="Bestellungen\Events\BestellungBegonnenEvent.cs" />
+    <Compile Include="Konten\Commands\AbbuchenCommand.cs" />
+    <Compile Include="Konten\Commands\KontoAufloesenCommand.cs" />
+    <Compile Include="Konten\Commands\KontoAufloesenCommandHandler.cs" />
+    <Compile Include="Konten\EventHandlers\CompensateMehrereKontenMitSelbemBenutzer.cs" />
+    <Compile Include="Konten\Events\AbgebuchtEvent.cs" />
+    <Compile Include="Konten\Events\KontoAufgeloest.cs" />
+    <Compile Include="Konten\Queries\KontoByBenutzerQuery.cs" />
+    <Compile Include="Konten\Queries\KontoByBenutzerQueryHandler.cs" />
+    <Compile Include="Konten\Queries\MehrereKontenMitSelbemBenutzerException.cs" />
+    <Compile Include="Konten\ValueObjects\Benutzer.cs" />
+    <Compile Include="Bestellungen\BezahlenSaga.cs" />
+    <Compile Include="Tests.cs" />
+    <Compile Include="Konten\Events\EingezahltEvent.cs" />
+    <Compile Include="Konten\Commands\EinzahlenCommand.cs" />
+    <Compile Include="Konten\Commands\EinzahlenCommandHandler.cs" />
+    <Compile Include="Konten\Queries\GetAllKontenQuery.cs" />
+    <Compile Include="Konten\Queries\GetAllKontenQueryHandler.cs" />
+    <Compile Include="Konten\Konto.cs" />
+    <Compile Include="Konten\KontoAggregate.cs" />
+    <Compile Include="Konten\Commands\KontoEroeffnenCommand.cs" />
+    <Compile Include="Konten\Commands\KontoEroeffnenCommandHandler.cs" />
+    <Compile Include="Konten\Events\KontoEroeffnetEvent.cs" />
+    <Compile Include="Konten\KontoId.cs" />
+    <Compile Include="Konten\ReadModels\KontoReadModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Verwenden Sie die Wiederherstellung von NuGet-Paketen, um die fehlenden Dateien herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\xunit.runner.visualstudio.2.2.0\build\net20\xunit.runner.visualstudio.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.runner.visualstudio.2.2.0\build\net20\xunit.runner.visualstudio.props'))" />
+  </Target>
+</Project>
