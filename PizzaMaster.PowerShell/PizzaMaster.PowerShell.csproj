@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{29AC3343-2CFD-42B3-AEBB-7A4E5BD51366}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PizzaMaster.PowerShell</RootNamespace>
+    <AssemblyName>PizzaMaster.PowerShell</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=4.6.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.6.1\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="EventFlow, Version=0.48.2937.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EventFlow.0.48.2937\lib\net451\EventFlow.dll</HintPath>
+    </Reference>
+    <Reference Include="EventFlow.Autofac, Version=0.48.2937.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EventFlow.Autofac.0.48.2937\lib\net451\EventFlow.Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="LiteDB, Version=3.1.4.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiteDB.3.1.4\lib\net462\LiteDB.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.4.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.PowerShell.5.ReferenceAssemblies.1.1.0\lib\net4\System.Management.Automation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Cmdlets\AddEinzahlung.cs" />
+    <Compile Include="Nouns.cs" />
+    <Compile Include="Cmdlets\GetKonto.cs" />
+    <Compile Include="Cmdlets\NewKonto.cs" />
+    <Compile Include="PizzaMasterCmdlet.cs" />
+    <Compile Include="PizzaMasterCmdletWithBenutzer.cs" />
+    <Compile Include="BufferedCmdletLog.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PizzaMaster.Application\PizzaMaster.Application.csproj">
+      <Project>{30e12b37-f768-41b5-8b86-cdd374e742c1}</Project>
+      <Name>PizzaMaster.Application</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PizzaMaster\PizzaMaster.csproj">
+      <Project>{47097FF2-2CAA-4433-B9BD-CE1629DA3F31}</Project>
+      <Name>PizzaMaster</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

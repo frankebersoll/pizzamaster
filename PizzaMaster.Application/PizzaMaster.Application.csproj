@@ -1,12 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-  
+
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.6.1" />
     <PackageReference Include="EventFlow" Version="0.48.2937" />
+    <PackageReference Include="EventFlow.Autofac" Version="0.48.2937" />
+    <PackageReference Include="LiteDB" Version="3.1.4" />
     <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <ProjectReference Include="..\PizzaMaster\PizzaMaster.csproj" />
+  </ItemGroup>
+
 </Project>
