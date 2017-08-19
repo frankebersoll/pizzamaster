@@ -41,5 +41,19 @@ namespace PizzaMaster.Tests.Konten
             this.Konto.TransaktionenShouldBe(Einzahlung(20, 20),
                                              Einzahlung(20, 40));
         }
+
+        [Fact]
+        public void NegativenBetragEinzahlenKnallt()
+        {
+            Action action = () => this.Konto.Einzahlen(-5);
+            action.ShouldThrow<ArgumentOutOfRangeException>();
+        }
+
+        [Fact]
+        public void NegativenBetragAbbuchenKnallt()
+        {
+            Action action = () => this.Konto.Einzahlen(-5);
+            action.ShouldThrow<ArgumentOutOfRangeException>();
+        }
     }
 }

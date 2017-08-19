@@ -35,5 +35,11 @@ namespace PizzaMaster.Tests.Konten
             Action action = () => this.Konto.Einzahlen(20);
             action.ShouldThrow<DomainError>();
         }
+
+        [Fact]
+        public void QueryFindetNichts()
+        {
+            this.Client.GetKonten().Should().BeEmpty();
+        }
     }
 }

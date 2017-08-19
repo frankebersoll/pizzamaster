@@ -32,5 +32,11 @@ namespace PizzaMaster.Tests.Konten
             this.Konto.Einzahlen(20);
             this.Konto.Saldo.Should().Be(20);
         }
+
+        [Fact]
+        public void QueryFindetKonto()
+        {
+            this.Client.GetKonten().Should().ContainSingle(k => k.Benutzer == this.Konto.Benutzer);
+        }
     }
 }
