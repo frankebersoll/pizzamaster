@@ -9,7 +9,7 @@ using PizzaMaster.Domain.Common;
 
 namespace PizzaMaster.Domain.Bestellungen
 {
-    public class BestellungAggregate : AggregateRoot<BestellungAggregate, BestellungId>, IAggregateRoot
+    public class BestellungAggregate : AggregateRoot<BestellungAggregate, BestellungId>
     {
         private readonly BestellungState state = new BestellungState();
 
@@ -52,7 +52,7 @@ namespace PizzaMaster.Domain.Bestellungen
             }
         }
 
-        public void ArtikelHinzufuegen(decimal betrag, string beschreibung, Benutzer benutzer = null)
+        public void ArtikelHinzufuegen(Betrag betrag, string beschreibung, Benutzer benutzer = null)
         {
             BestellungSpecs.NichtAbgeschlossen
                            .And(Specs.Existiert)
@@ -64,6 +64,8 @@ namespace PizzaMaster.Domain.Bestellungen
 
         public void ArtikelZuordnen(ArtikelId artikelId, Benutzer benutzer)
         {
+            Specs.Existiert.ThrowDomainErrorIfNotStatisfied(this);
+
             var artikel = this.state.GetArtikel(artikelId);
             ArtikelSpecs.Status(ArtikelStatus.Offen)
                         .ThrowDomainErrorIfNotStatisfied(artikel);
@@ -94,6 +96,28 @@ namespace PizzaMaster.Domain.Bestellungen
             {
                 this.Emit(new BestellungAbgeschlossen());
             }
+        }
+
+        public void ArtikelEntfernen(ArtikelId artikelId)
+        {
+            Specs.Existiert.ThrowDomainErrorIfNotStatisfied(this);
+
+            var artikel = this.state.GetArtikel(artikelId);
+            ArtikelSpecs.Status(ArtikelStatus.Offen)
+                        .ThrowDomainErrorIfNotStatisfied(artikel);
+
+            this.Emit(new ArtikelEntfernt(artikelId));
+        }
+
+        public void Abbrechen()
+        {
+            Specs.Existiert.ThrowDomainErrorIfNotStatisfied(this);
+
+            ArtikelSpecs.Status(ArtikelStatus.Offen)
+                        .ForAll()
+                        .ThrowDomainErrorIfNotStatisfied(this.Artikel);
+
+            this.Emit(new BestellungAbgebrochen());
         }
     }
 }

@@ -21,7 +21,7 @@ namespace PizzaMaster.Domain.Konten
 
         public decimal Saldo => this.state.Saldo;
 
-        public void Abbuchen(decimal betrag, string beschreibung)
+        public void Abbuchen(Betrag betrag, string beschreibung)
         {
             KontoSpecs.NichtAufgeloest
                       .And(Specs.Existiert)
@@ -41,11 +41,8 @@ namespace PizzaMaster.Domain.Konten
             this.Emit(new KontoAufgeloest());
         }
 
-        public void Einzahlen(decimal betrag)
+        public void Einzahlen(Betrag betrag)
         {
-            if (betrag <= 0)
-                throw new ArgumentOutOfRangeException(nameof(betrag));
-
             KontoSpecs.NichtAufgeloest
                       .And(Specs.Existiert)
                       .ThrowDomainErrorIfNotStatisfied(this);

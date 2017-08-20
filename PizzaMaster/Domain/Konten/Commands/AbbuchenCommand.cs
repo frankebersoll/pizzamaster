@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EventFlow.Commands;
 using PizzaMaster.Domain.Bezahlen;
+using PizzaMaster.Domain.Common;
 
 namespace PizzaMaster.Domain.Konten.Commands
 {
@@ -10,7 +11,7 @@ namespace PizzaMaster.Domain.Konten.Commands
     {
         public AbbuchenCommand(
             KontoId aggregateId,
-            decimal betrag,
+            Betrag betrag,
             string beschreibung,
             BezahlungId bezahlung = null)
             : base(aggregateId)
@@ -22,7 +23,7 @@ namespace PizzaMaster.Domain.Konten.Commands
 
         public string Beschreibung { get; }
 
-        public decimal Betrag { get; }
+        public Betrag Betrag { get; }
 
         public BezahlungId Bezahlung { get; }
     }

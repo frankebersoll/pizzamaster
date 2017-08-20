@@ -10,7 +10,7 @@ namespace PizzaMaster.Tests.Konten
 {
     public class AufgeloestesKonto : KontoTestBase
     {
-        public AufgeloestesKonto(ITestOutputHelper output, DatabaseFixture dbFixture) : base(output, dbFixture)
+        public AufgeloestesKonto(ITestOutputHelper output) : base(output)
         {
             this.Konto.Aufloesen();
         }

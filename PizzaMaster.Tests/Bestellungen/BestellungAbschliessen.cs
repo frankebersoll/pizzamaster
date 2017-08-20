@@ -11,7 +11,7 @@ namespace PizzaMaster.Tests.Bestellungen
 {
     public class BestellungAbschliessen : BestellungTestBase
     {
-        public BestellungAbschliessen(ITestOutputHelper output, DatabaseFixture dbFixture) : base(output, dbFixture)
+        public BestellungAbschliessen(ITestOutputHelper output) : base(output)
         {
             this.Client.KontoEroeffnen(Benni).Einzahlen(20);
 

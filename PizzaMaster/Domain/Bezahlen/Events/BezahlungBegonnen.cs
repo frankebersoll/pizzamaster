@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EventFlow.Aggregates;
+using PizzaMaster.Domain.Common;
 
 namespace PizzaMaster.Domain.Bezahlen.Events
 {
     public class BezahlungBegonnen : AggregateEvent<BezahlungSaga, BezahlungId>
     {
-        public BezahlungBegonnen(string beschreibung, decimal betrag)
+        public BezahlungBegonnen(string beschreibung, Betrag betrag)
         {
             this.Betrag = betrag;
             this.Beschreibung = beschreibung;
@@ -15,6 +16,6 @@ namespace PizzaMaster.Domain.Bezahlen.Events
 
         public string Beschreibung { get; }
 
-        public decimal Betrag { get; }
+        public Betrag Betrag { get; }
     }
 }

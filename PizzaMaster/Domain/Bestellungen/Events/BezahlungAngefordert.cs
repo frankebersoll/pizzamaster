@@ -8,7 +8,7 @@ namespace PizzaMaster.Domain.Bestellungen.Events
 {
     public class BezahlungAngefordert : AggregateEvent<BestellungAggregate, BestellungId>
     {
-        public BezahlungAngefordert(Benutzer benutzer, string beschreibung, decimal betrag)
+        public BezahlungAngefordert(Benutzer benutzer, string beschreibung, Betrag betrag)
         {
             this.Benutzer = benutzer;
             this.Betrag = betrag;
@@ -19,6 +19,6 @@ namespace PizzaMaster.Domain.Bestellungen.Events
 
         public string Beschreibung { get; }
 
-        public decimal Betrag { get; }
+        public Betrag Betrag { get; }
     }
 }

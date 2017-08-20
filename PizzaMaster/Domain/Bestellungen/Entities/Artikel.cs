@@ -8,7 +8,7 @@ namespace PizzaMaster.Domain.Bestellungen.Entities
 {
     public class Artikel : Entity<ArtikelId>
     {
-        public Artikel(ArtikelId id, decimal betrag, string beschreibung, Benutzer benutzer = null) : base(id)
+        public Artikel(ArtikelId id, Betrag betrag, string beschreibung, Benutzer benutzer = null) : base(id)
         {
             this.Betrag = betrag;
             this.Beschreibung = beschreibung;
@@ -19,7 +19,7 @@ namespace PizzaMaster.Domain.Bestellungen.Entities
 
         public string Beschreibung { get; }
 
-        public decimal Betrag { get; }
+        public Betrag Betrag { get; }
 
         public bool IstZugeordnet => this.Benutzer != null;
 

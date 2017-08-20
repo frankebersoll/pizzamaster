@@ -10,7 +10,7 @@ namespace PizzaMaster.Tests.Bestellungen
 {
     public class NichtZugeordnet : BestellungTestBase
     {
-        public NichtZugeordnet(ITestOutputHelper output, DatabaseFixture dbFixture) : base(output, dbFixture)
+        public NichtZugeordnet(ITestOutputHelper output) : base(output)
         {
             this.Client.KontoEroeffnen(Benni).Einzahlen(20);
 
@@ -29,14 +29,14 @@ namespace PizzaMaster.Tests.Bestellungen
         [Fact]
         public void Zuordnen()
         {
-            foreach (var artikel in this.Bestellung.Model.Artikel)
+            foreach (var artikel in this.Bestellung.Artikel)
             {
-                this.Bestellung.ArtikelZuordnen(artikel.Id, Benni);
+                artikel.Zuordnen(Benni);
             }
 
             this.Bestellung.Abschliessen();
 
-            this.Bestellung.Model.IstAbgeschlossen.Should().BeTrue();
+            this.Bestellung.IstAbgeschlossen.Should().BeTrue();
             this.GetKonto(Benni).Saldo.Should().Be(7);
         }
     }

@@ -8,7 +8,7 @@ using PizzaMaster.Domain.Konten;
 
 namespace PizzaMaster.Query.Konten
 {
-    class KontoByBenutzerQueryHandler : IQueryHandler<KontoByBenutzerQuery, Konto>
+    class KontoByBenutzerQueryHandler : IQueryHandler<KontoByBenutzerQuery, KontoReadModel>
     {
         private readonly ISearchableReadModelStore<KontoReadModel> store;
 
@@ -17,7 +17,7 @@ namespace PizzaMaster.Query.Konten
             this.store = store;
         }
 
-        public async Task<Konto> ExecuteQueryAsync(KontoByBenutzerQuery query, CancellationToken cancellationToken)
+        public async Task<KontoReadModel> ExecuteQueryAsync(KontoByBenutzerQuery query, CancellationToken cancellationToken)
         {
             var benutzer = query.Benutzer.Value;
             var models = (await this.store.FindAsync(m => m.Benutzer == benutzer && !m.IsAufgeloest, cancellationToken))
@@ -29,7 +29,7 @@ namespace PizzaMaster.Query.Konten
                         throw new Exception("Not found.");
                     else return null;
                 case 1:
-                    return models.Single().ToEntity();
+                    return models.Single();
                 default:
                     throw new MehrereKontenMitSelbemBenutzerException();
             }

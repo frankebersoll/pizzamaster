@@ -9,14 +9,14 @@ namespace PizzaMaster.Tests.Bestellungen
 {
     public abstract class BestellungTestBase : DomainTestBase
     {
-        protected readonly Bestellung Bestellung;
+        protected readonly BestellungModel Bestellung;
 
-        protected BestellungTestBase(ITestOutputHelper output, DatabaseFixture dbFixture) : base(dbFixture, output)
+        protected BestellungTestBase(ITestOutputHelper output) : base(output)
         {
             this.Bestellung = this.CreateBestellung();
         }
 
-        protected virtual Bestellung CreateBestellung()
+        protected virtual BestellungModel CreateBestellung()
         {
             return this.Client.BestellungBeginnen("Eurasia");
         }

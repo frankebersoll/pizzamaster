@@ -11,7 +11,7 @@ namespace PizzaMaster.Tests.Konten
 {
     public class KontoImPlus : KontoTestBase
     {
-        public KontoImPlus(ITestOutputHelper output, DatabaseFixture dbFixture) : base(output, dbFixture)
+        public KontoImPlus(ITestOutputHelper output) : base(output)
         {
             this.Konto.Einzahlen(20);
         }
@@ -52,7 +52,7 @@ namespace PizzaMaster.Tests.Konten
         [Fact]
         public void NegativenBetragAbbuchenKnallt()
         {
-            Action action = () => this.Konto.Einzahlen(-5);
+            Action action = () => this.Konto.Abbuchen(-5, "Knödel");
             action.ShouldThrow<ArgumentOutOfRangeException>();
         }
     }

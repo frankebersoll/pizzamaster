@@ -6,5 +6,5 @@ using PizzaMaster.Domain.Konten;
 
 namespace PizzaMaster.Query.Konten
 {
-    public class GetAllKontenQuery : IQuery<IEnumerable<Konto>> { }
+    public class GetAllKontenQuery : IQuery<IEnumerable<KontoReadModel>> { }
 }

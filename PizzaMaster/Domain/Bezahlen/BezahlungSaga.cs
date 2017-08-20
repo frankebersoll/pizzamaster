@@ -11,6 +11,7 @@ using PizzaMaster.Domain.Bestellungen;
 using PizzaMaster.Domain.Bestellungen.Commands;
 using PizzaMaster.Domain.Bestellungen.Events;
 using PizzaMaster.Domain.Bezahlen.Events;
+using PizzaMaster.Domain.Common;
 using PizzaMaster.Domain.Konten;
 using PizzaMaster.Domain.Konten.Commands;
 using PizzaMaster.Domain.Konten.Events;
@@ -53,8 +54,8 @@ namespace PizzaMaster.Domain.Bezahlen
             }
             else
             {
-                this.Emit(new KontoZugeordnet(konto.Id));
-                this.PublishAbbuchenCommand(konto.Id, beschreibung, betrag);
+                this.Emit(new KontoZugeordnet(new KontoId(konto.Id)));
+                this.PublishAbbuchenCommand(new KontoId(konto.Id), beschreibung, betrag);
             }
         }
 
@@ -80,7 +81,7 @@ namespace PizzaMaster.Domain.Bezahlen
             return Task.CompletedTask;
         }
 
-        private void PublishAbbuchenCommand(KontoId konto, string beschreibung, decimal betrag)
+        private void PublishAbbuchenCommand(KontoId konto, string beschreibung, Betrag betrag)
         {
             var command = new AbbuchenCommand(konto, betrag, beschreibung, this.Id);
 

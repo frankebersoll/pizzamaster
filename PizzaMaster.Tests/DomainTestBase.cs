@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using EventFlow.Aggregates;
 using PizzaMaster.Application;
@@ -11,26 +12,26 @@ using Xunit.Abstractions;
 
 namespace PizzaMaster.Tests
 {
-    [Collection("db")]
     public abstract class DomainTestBase : IDisposable
     {
         protected static readonly Benutzer Benni = new Benutzer("Benni");
         protected static readonly Benutzer Frank = new Benutzer("Frank");
 
         protected readonly PizzaMasterClient Client;
+        private readonly MemoryStream db;
 
-        protected DomainTestBase(DatabaseFixture dbFixture, ITestOutputHelper output)
+        protected DomainTestBase(ITestOutputHelper output)
         {
-            var dataFileName = dbFixture.GetRandomDataFileName();
-
+            this.db = new MemoryStream();
             this.Client = PizzaMasterApplication.Create()
-                                                .ConfigureLiteDb(dataFileName)
+                                                .ConfigureLiteDb(this.db)
                                                 .Run();
         }
 
         public void Dispose()
         {
             this.Client.Dispose();
+            this.db.Dispose();
         }
 
         protected static Transaktion Abbuchung(decimal betrag, decimal saldo, string beschreibung)

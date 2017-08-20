@@ -9,55 +9,53 @@ using PizzaMaster.Query.Konten;
 
 namespace PizzaMaster.Application.Client
 {
-    public class KontoModel : ClientModelBase
+    public class KontoModel : ClientModelBase<KontoReadModel, KontoId>
     {
-        private Konto entity;
         private Transaktion[] transaktionen;
 
-        public KontoModel(KontoId id, PizzaMasterClient client) : base(client)
+        public KontoModel(KontoId id, PizzaMasterClient client) : base(client, id)
         {
-            this.Id = id;
         }
 
-        public KontoModel(Konto entity, PizzaMasterClient client) : base(client)
+        public KontoModel(KontoReadModel entity, PizzaMasterClient client) : base(client, new KontoId(entity.Id), entity)
         {
-            this.Id = entity.Id;
-            this.entity = entity;
         }
 
-        public Benutzer Benutzer => this.Model.Benutzer;
+        public Benutzer Benutzer => new Benutzer(this.ReadModel.Benutzer);
 
-        public KontoId Id { get; }
-
-        private Konto Model => this.entity ?? this.LoadEntity();
-
-        public decimal Saldo => this.Model.Saldo;
+        public decimal Saldo => this.ReadModel.Saldo;
 
         public IEnumerable<Transaktion> Transaktionen => this.transaktionen ?? this.LoadTransaktionen();
 
-        public void Abbuchen(decimal betrag, string beschreibung)
+        public void Abbuchen(Betrag betrag, string beschreibung)
         {
-            this.Client.Publish(new AbbuchenCommand(this.Id, betrag, beschreibung));
+            this.Publish(new AbbuchenCommand(this.Id, betrag, beschreibung));
         }
 
         public void Aufloesen()
         {
-            this.Client.Publish(new KontoAufloesenCommand(this.Id));
+            this.Publish(new KontoAufloesenCommand(this.Id));
         }
 
-        public void Einzahlen(decimal betrag)
+        public void Einzahlen(Betrag betrag)
         {
-            this.Client.Publish(new EinzahlenCommand(this.Id, betrag));
-        }
-
-        private Konto LoadEntity()
-        {
-            return this.entity = this.Client.Query(new ReadModelByIdQuery<KontoReadModel>(this.Id)).ToEntity();
+            this.Publish(new EinzahlenCommand(this.Id, betrag));
         }
 
         private Transaktion[] LoadTransaktionen()
         {
-            return this.transaktionen = this.Client.Query(new TransaktionenQuery(this.Id)).ToArray();
+            return this.transaktionen = this.Query(new TransaktionenQuery(this.Id)).ToArray();
+        }
+
+        public override void Refresh()
+        {
+            base.Refresh();
+            this.transaktionen = null;
+        }
+
+        protected override KontoReadModel QueryReadModel()
+        {
+            return this.Query(new ReadModelByIdQuery<KontoReadModel>(this.Id));
         }
     }
 }

@@ -10,7 +10,7 @@ namespace PizzaMaster.Domain.Bestellungen.Commands
     {
         public ArtikelHinzufuegenCommand(
             BestellungId aggregateId,
-            decimal betrag,
+            Betrag betrag,
             string beschreibung,
             Benutzer benutzer = null)
             : base(aggregateId)
@@ -27,6 +27,6 @@ namespace PizzaMaster.Domain.Bestellungen.Commands
 
         public string Beschreibung { get; }
 
-        public decimal Betrag { get; }
+        public Betrag Betrag { get; }
     }
 }

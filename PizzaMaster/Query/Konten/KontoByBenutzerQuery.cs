@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using EventFlow.Queries;
 using PizzaMaster.Domain.Common;
-using PizzaMaster.Domain.Konten;
 
 namespace PizzaMaster.Query.Konten
 {
-    public class KontoByBenutzerQuery : IQuery<Konto>
+    public class KontoByBenutzerQuery : IQuery<KontoReadModel>
     {
         public KontoByBenutzerQuery(Benutzer benutzer, bool throwIfNotFound = true)
         {

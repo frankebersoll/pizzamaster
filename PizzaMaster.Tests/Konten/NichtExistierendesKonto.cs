@@ -12,8 +12,7 @@ namespace PizzaMaster.Tests.Konten
 {
     public class NichtExistierendesKonto : KontoTestBase
     {
-        public NichtExistierendesKonto(ITestOutputHelper output, DatabaseFixture dbFixture) :
-            base(output, dbFixture) { }
+        public NichtExistierendesKonto(ITestOutputHelper output) : base(output) { }
 
         [Fact]
         public void AbbuchenKnallt()

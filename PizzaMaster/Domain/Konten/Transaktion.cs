@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EventFlow.Aggregates;
 using EventFlow.Entities;
+using PizzaMaster.Domain.Common;
 using PizzaMaster.Domain.Konten.Events;
 
 namespace PizzaMaster.Domain.Konten
@@ -13,7 +14,7 @@ namespace PizzaMaster.Domain.Konten
             IEventId id,
             DateTimeOffset timestamp,
             Transaktionstyp typ,
-            decimal betrag,
+            Betrag betrag,
             decimal saldo,
             string beschreibung = null) : base(id)
         {
@@ -33,7 +34,7 @@ namespace PizzaMaster.Domain.Konten
 
         public string Beschreibung { get; }
 
-        public decimal Betrag { get; }
+        public Betrag Betrag { get; }
 
         public decimal Saldo { get; }
 

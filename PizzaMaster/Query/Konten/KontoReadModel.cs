@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using EventFlow.Aggregates;
 using EventFlow.ReadStores;
-using PizzaMaster.Domain.Common;
 using PizzaMaster.Domain.Konten;
 using PizzaMaster.Domain.Konten.Events;
 
@@ -47,10 +46,5 @@ namespace PizzaMaster.Query.Konten
         public string Id { get; private set; }
 
         public long? Version { get; set; }
-
-        public Konto ToEntity()
-        {
-            return new Konto(new KontoId(this.Id), new Benutzer(this.Benutzer), this.Saldo);
-        }
     }
 }

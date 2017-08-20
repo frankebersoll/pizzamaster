@@ -10,7 +10,7 @@ namespace PizzaMaster.Tests.Konten
 {
     public class LeeresKonto : KontoTestBase
     {
-        public LeeresKonto(ITestOutputHelper output, DatabaseFixture dbFixture) : base(output, dbFixture) { }
+        public LeeresKonto(ITestOutputHelper output) : base(output) { }
 
         [Fact]
         public void Abbuchen()

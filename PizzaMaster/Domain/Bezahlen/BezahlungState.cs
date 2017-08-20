@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EventFlow.Aggregates;
 using PizzaMaster.Domain.Bezahlen.Events;
+using PizzaMaster.Domain.Common;
 using PizzaMaster.Domain.Konten;
 
 namespace PizzaMaster.Domain.Bezahlen
@@ -14,7 +15,7 @@ namespace PizzaMaster.Domain.Bezahlen
     {
         public string Beschreibung { get; private set; }
 
-        public decimal Betrag { get; private set; }
+        public Betrag Betrag { get; private set; }
 
         public KontoId Konto { get; private set; }
 

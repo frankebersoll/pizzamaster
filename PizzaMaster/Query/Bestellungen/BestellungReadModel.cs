@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using EventFlow.Aggregates;
 using EventFlow.ReadStores;
 using PizzaMaster.Domain.Bestellungen;
-using PizzaMaster.Domain.Bestellungen.Entities;
 using PizzaMaster.Domain.Bestellungen.Events;
 
 namespace PizzaMaster.Query.Bestellungen
@@ -13,14 +11,12 @@ namespace PizzaMaster.Query.Bestellungen
     public class BestellungReadModel : IVersionedReadModel,
                                        IAmReadModelFor<BestellungAggregate, BestellungId, BestellungBegonnen>,
                                        IAmReadModelFor<BestellungAggregate, BestellungId, ArtikelHinzugefuegt>,
+                                       IAmReadModelFor<BestellungAggregate, BestellungId, ArtikelEntfernt>,
                                        IAmReadModelFor<BestellungAggregate, BestellungId, ArtikelBenutzerZugeordnet>,
-                                       IAmReadModelFor<BestellungAggregate, BestellungId, BezahlungAngefordert>,
-                                       IAmReadModelFor<BestellungAggregate, BestellungId, BestellungBezahlt>,
-                                       IAmReadModelFor<BestellungAggregate, BestellungId, BestellungAbgeschlossen>
+                                       IAmReadModelFor<BestellungAggregate, BestellungId, BestellungAbgeschlossen>,
+                                       IAmReadModelFor<BestellungAggregate, BestellungId, BestellungAbgebrochen>
     {
-        private readonly ArtikelList artikel = new ArtikelList();
-
-        public IReadOnlyList<Artikel> Artikel => this.artikel.ToImmutableArray();
+        public ArtikelReadModelCollection Artikel { get; private set; } = new ArtikelReadModelCollection();
 
         public bool IstAbgeschlossen { get; private set; }
 
@@ -31,7 +27,15 @@ namespace PizzaMaster.Query.Bestellungen
             IDomainEvent<BestellungAggregate, BestellungId, ArtikelBenutzerZugeordnet> domainEvent)
         {
             var zugeordnet = domainEvent.AggregateEvent;
-            this.artikel[zugeordnet.ArtikelId].Benutzer = zugeordnet.Benutzer;
+            this.Artikel[zugeordnet.ArtikelId.Value].Benutzer = zugeordnet.Benutzer.Value;
+        }
+
+        public void Apply(
+            IReadModelContext context,
+            IDomainEvent<BestellungAggregate, BestellungId, ArtikelEntfernt> domainEvent)
+        {
+            var artikelEntfernt = domainEvent.AggregateEvent;
+            this.Artikel.Remove(artikelEntfernt.ArtikelId.Value);
         }
 
         public void Apply(
@@ -39,7 +43,14 @@ namespace PizzaMaster.Query.Bestellungen
             IDomainEvent<BestellungAggregate, BestellungId, ArtikelHinzugefuegt> domainEvent)
         {
             var hinzugefuegt = domainEvent.AggregateEvent;
-            this.artikel.Add(hinzugefuegt.Artikel);
+            this.Artikel.Add(new ArtikelReadModel(hinzugefuegt.Artikel));
+        }
+
+        public void Apply(
+            IReadModelContext context,
+            IDomainEvent<BestellungAggregate, BestellungId, BestellungAbgebrochen> domainEvent)
+        {
+            this.IstAbgeschlossen = true;
         }
 
         public void Apply(
@@ -54,28 +65,6 @@ namespace PizzaMaster.Query.Bestellungen
             IDomainEvent<BestellungAggregate, BestellungId, BestellungBegonnen> domainEvent)
         {
             this.Lieferdienst = domainEvent.AggregateEvent.Lieferdienst;
-        }
-
-        public void Apply(
-            IReadModelContext context,
-            IDomainEvent<BestellungAggregate, BestellungId, BestellungBezahlt> domainEvent)
-        {
-            var bezahlt = domainEvent.AggregateEvent;
-            foreach (var artikel in this.artikel.Where(a => a.Benutzer == bezahlt.Benutzer))
-            {
-                artikel.Status = ArtikelStatus.Bezahlt;
-            }
-        }
-
-        public void Apply(
-            IReadModelContext context,
-            IDomainEvent<BestellungAggregate, BestellungId, BezahlungAngefordert> domainEvent)
-        {
-            var angefordert = domainEvent.AggregateEvent;
-            foreach (var artikel in this.artikel.Where(a => a.Benutzer == angefordert.Benutzer))
-            {
-                artikel.Status = ArtikelStatus.BezahlungAngefordert;
-            }
         }
 
         public string Id { get; }

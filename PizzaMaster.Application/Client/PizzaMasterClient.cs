@@ -10,6 +10,7 @@ using EventFlow.Queries;
 using EventFlow.ReadStores;
 using PizzaMaster.Domain.Bestellungen.Commands;
 using PizzaMaster.Domain.Common;
+using PizzaMaster.Domain.Konten;
 using PizzaMaster.Domain.Konten.Commands;
 using PizzaMaster.Query.Konten;
 
@@ -39,11 +40,11 @@ namespace PizzaMaster.Application.Client
             this.container.Dispose();
         }
 
-        public Bestellung BestellungBeginnen(string lieferdienst)
+        public BestellungModel BestellungBeginnen(string lieferdienst)
         {
             var command = new BestellungBeginnenCommand(lieferdienst);
             this.Publish(command);
-            return new Bestellung(command.AggregateId, this);
+            return new BestellungModel(command.AggregateId, this);
         }
 
         public IEnumerable<KontoModel> GetKonten()
@@ -96,7 +97,7 @@ namespace PizzaMaster.Application.Client
         public KontoModel TryGetKonto(Benutzer benutzer)
         {
             var model = this.Query(new KontoByBenutzerQuery(benutzer, false));
-            return model != null ? new KontoModel(model.Id, this) : null;
+            return model != null ? new KontoModel(new KontoId(model.Id), this) : null;
         }
     }
 }

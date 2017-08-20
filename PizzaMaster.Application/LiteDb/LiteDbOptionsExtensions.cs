@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using EventFlow;
 using EventFlow.Configuration;
 using EventFlow.EventStores;
@@ -23,6 +25,14 @@ namespace PizzaMaster.Application.LiteDb
 
         public static IEventFlowOptions ConfigureLiteDb(
             this IEventFlowOptions eventFlowOptions,
+            Stream stream,
+            BsonMapper mapper = null)
+        {
+            return eventFlowOptions.ConfigureLiteDb(() => new LiteDatabase(stream, mapper));
+        }
+
+        public static IEventFlowOptions ConfigureLiteDb(
+            this IEventFlowOptions eventFlowOptions,
             Func<LiteDatabase> mongoDatabaseFactory)
         {
             return eventFlowOptions.RegisterServices(sr =>
@@ -36,11 +46,11 @@ namespace PizzaMaster.Application.LiteDb
             this IEventFlowOptions eventFlowOptions,
             string collectionName = "eventflow-events")
         {
-            return eventFlowOptions.RegisterServices(s => s.Register<IEventPersistence>(
-                                                                                        c =>
-                                                                                            new
-                                                                                                LiteDbEventPersistance(c.Resolver.Resolve<LiteDatabase>(),
-                                                                                                                       collectionName)));
+            return eventFlowOptions
+                .RegisterServices(s => s.Register<IEventPersistence>(c =>
+                                                                         new
+                                                                             LiteDbEventPersistance(c.Resolver.Resolve<LiteDatabase>(),
+                                                                                                    collectionName)));
         }
 
         public static IEventFlowOptions UseLiteDbReadStoreFor<TReadModel>(

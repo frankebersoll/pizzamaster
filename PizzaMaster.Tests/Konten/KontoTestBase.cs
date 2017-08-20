@@ -10,7 +10,7 @@ namespace PizzaMaster.Tests.Konten
     {
         protected readonly KontoModel Konto;
 
-        protected KontoTestBase(ITestOutputHelper output, DatabaseFixture dbFixture) : base(dbFixture, output)
+        protected KontoTestBase(ITestOutputHelper output) : base(output)
         {
             this.Konto = this.CreateKonto();
         }

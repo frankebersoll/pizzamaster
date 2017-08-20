@@ -8,7 +8,7 @@ using PizzaMaster.Domain.Konten;
 
 namespace PizzaMaster.Query.Konten
 {
-    class GetAllKontenQueryHandler : IQueryHandler<GetAllKontenQuery, IEnumerable<Konto>>
+    class GetAllKontenQueryHandler : IQueryHandler<GetAllKontenQuery, IEnumerable<KontoReadModel>>
     {
         private readonly ISearchableReadModelStore<KontoReadModel> store;
 
@@ -17,12 +17,12 @@ namespace PizzaMaster.Query.Konten
             this.store = store;
         }
 
-        public async Task<IEnumerable<Konto>> ExecuteQueryAsync(
+        public async Task<IEnumerable<KontoReadModel>> ExecuteQueryAsync(
             GetAllKontenQuery query,
             CancellationToken cancellationToken)
         {
             var models = await this.store.FindAsync(m => !m.IsAufgeloest, cancellationToken);
-            return models.Select(m => m.ToEntity());
+            return models;
         }
     }
 }

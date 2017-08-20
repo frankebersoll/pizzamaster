@@ -12,10 +12,12 @@ namespace PizzaMaster.Domain.Bestellungen
     public class BestellungState : AggregateState<BestellungAggregate, BestellungId, BestellungState>,
                                    IApply<BestellungBegonnen>,
                                    IApply<ArtikelHinzugefuegt>,
+                                   IApply<ArtikelEntfernt>,
                                    IApply<ArtikelBenutzerZugeordnet>,
                                    IApply<BezahlungAngefordert>,
                                    IApply<BestellungBezahlt>,
-                                   IApply<BestellungAbgeschlossen>
+                                   IApply<BestellungAbgeschlossen>,
+                                   IApply<BestellungAbgebrochen>
     {
         private readonly ArtikelList artikel = new ArtikelList();
 
@@ -31,10 +33,19 @@ namespace PizzaMaster.Domain.Bestellungen
             this.UpdateArtikel(id, a => a.Benutzer = e.Benutzer);
         }
 
+        public void Apply(ArtikelEntfernt aggregateEvent)
+        {
+            this.artikel.Remove(aggregateEvent.ArtikelId);
+        }
+
         public void Apply(ArtikelHinzugefuegt aggregateEvent)
         {
-            var artikel = aggregateEvent.Artikel;
-            this.artikel.Add(artikel);
+            this.artikel.Add(aggregateEvent.Artikel);
+        }
+
+        public void Apply(BestellungAbgebrochen aggregateEvent)
+        {
+            this.IstAbgeschlossen = true;
         }
 
         public void Apply(BestellungAbgeschlossen aggregateEvent)
