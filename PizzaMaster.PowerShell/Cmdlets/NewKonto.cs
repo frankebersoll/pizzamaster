@@ -6,7 +6,7 @@ using PizzaMaster.Domain.Common;
 
 namespace PizzaMaster.PowerShell.Cmdlets
 {
-    [Cmdlet(VerbsCommon.New, Nouns.Konto)]
+    [Cmdlet(VerbsCommon.New, PizzaMasterNouns.Konto)]
     public class NewKonto : PizzaMasterCmdlet
     {
         [Parameter(Mandatory = true, Position = 1)]

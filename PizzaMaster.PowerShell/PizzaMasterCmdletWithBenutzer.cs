@@ -11,36 +11,56 @@ namespace PizzaMaster.PowerShell
     {
         private const string BenutzerKey = "Benutzer";
 
-        protected Benutzer Benutzer => this.MyInvocation.BoundParameters.TryGetValue(BenutzerKey, out var value)
-                                           ? new Benutzer((string) value)
-                                           : null;
+        private RuntimeDefinedParameterDictionary parameters;
+
+        protected Benutzer Benutzer
+        {
+            get
+            {
+                var benutzer = this.GetParameter<string>(BenutzerKey);
+                return benutzer != null ? new Benutzer(benutzer) : null;
+            }
+        }
 
         protected virtual bool BenutzerIsMandatory => false;
 
         public object GetDynamicParameters()
         {
-            var benutzer = this.GetClient().GetKonten().Select(k => k.Benutzer.Value).ToArray();
+            this.parameters = new RuntimeDefinedParameterDictionary();
+            this.AddParameters();
+            return this.parameters;
+        }
 
+        protected void AddParameter(
+            string key,
+            Type type,
+            int position,
+            bool isMandatory,
+            Action<Collection<Attribute>> additionalAttributes = null)
+        {
             var attributes = new Collection<Attribute>
                              {
                                  new ParameterAttribute
                                  {
-                                     Position = 1,
-                                     Mandatory = this.BenutzerIsMandatory
-                                 },
-                                 new ValidateSetAttribute(benutzer)
+                                     Position = position,
+                                     Mandatory = isMandatory
+                                 }
                              };
 
-            var runtimeDefinedParameterDictionary
-                = new RuntimeDefinedParameterDictionary
-                  {
-                      {
-                          BenutzerKey,
-                          new RuntimeDefinedParameter(BenutzerKey, typeof(String), attributes)
-                      }
-                  };
+            additionalAttributes?.Invoke(attributes);
+            this.parameters.Add(key, new RuntimeDefinedParameter(key, type, attributes));
+        }
 
-            return runtimeDefinedParameterDictionary;
+        protected virtual void AddParameters()
+        {
+            var benutzer = this.GetClient().GetKonten().Select(k => k.Benutzer.Value).ToArray();
+            var validateSet = new ValidateSetAttribute(benutzer);
+            this.AddParameter(BenutzerKey, typeof(string), 0, this.BenutzerIsMandatory, p => p.Add(validateSet));
+        }
+
+        protected T GetParameter<T>(string key)
+        {
+            return (T)this.parameters?[key].Value;
         }
     }
 }

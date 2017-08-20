@@ -63,8 +63,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cmdlets\AddAbbuchung.cs" />
     <Compile Include="Cmdlets\AddEinzahlung.cs" />
-    <Compile Include="Nouns.cs" />
+    <Compile Include="Cmdlets\NewBestellung.cs" />
+    <Compile Include="PizzaMasterNouns.cs" />
     <Compile Include="Cmdlets\GetKonto.cs" />
     <Compile Include="Cmdlets\NewKonto.cs" />
     <Compile Include="PizzaMasterCmdlet.cs" />

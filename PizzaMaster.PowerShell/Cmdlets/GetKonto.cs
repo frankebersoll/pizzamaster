@@ -5,7 +5,7 @@ using System.Management.Automation;
 
 namespace PizzaMaster.PowerShell.Cmdlets
 {
-    [Cmdlet(VerbsCommon.Get, Nouns.Konto)]
+    [Cmdlet(VerbsCommon.Get, PizzaMasterNouns.Konto)]
     public class GetKonto : PizzaMasterCmdletWithBenutzer
     {
         protected override void BeginOverride()
