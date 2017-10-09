@@ -12,8 +12,6 @@ namespace PizzaMaster.Application.Client
 
         private TReadModel readModel;
 
-        protected TReadModel ReadModel => this.readModel ?? (this.readModel = this.QueryReadModel());
-
         public ClientModelBase(PizzaMasterClient client, TId id)
         {
             this.Client = client;
@@ -25,6 +23,10 @@ namespace PizzaMaster.Application.Client
             this.readModel = readModel;
         }
 
+        public TId Id { get; private set; }
+
+        protected TReadModel ReadModel => this.readModel ?? (this.readModel = this.QueryReadModel());
+
         protected void Publish(params ICommand[] commands)
         {
             this.Client.Publish(commands);
@@ -35,8 +37,6 @@ namespace PizzaMaster.Application.Client
         {
             return this.Client.Query(query);
         }
-
-        public TId Id { get; private set; }
 
         protected abstract TReadModel QueryReadModel();
 

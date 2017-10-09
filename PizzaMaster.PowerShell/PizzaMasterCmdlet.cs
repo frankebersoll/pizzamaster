@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
-using EventFlow.Logs;
 using PizzaMaster.Application;
 using PizzaMaster.Application.Client;
 
@@ -20,6 +20,7 @@ namespace PizzaMaster.PowerShell
 
         protected virtual void BeginOverride() { }
 
+        [DebuggerStepThrough]
         protected sealed override void BeginProcessing()
         {
             this.GetLog().StartLogging(this);
@@ -47,7 +48,13 @@ namespace PizzaMaster.PowerShell
 
         private static Assembly CurrentDomainOnAssemblyResolve(object sender, ResolveEventArgs args)
         {
-            var assembly = Assembly.Load(args.Name.Substring(0, args.Name.IndexOf(',')));
+            var pos = args.Name.IndexOf(',');
+            if (pos < 0 || args.Name.Contains(".resources"))
+            {
+                return null;
+            }
+
+            var assembly = Assembly.Load(args.Name.Substring(0, pos));
             return assembly;
         }
 
@@ -95,7 +102,7 @@ namespace PizzaMaster.PowerShell
 
         protected virtual void ProcessOverride() { }
 
-        protected override void ProcessRecord()
+        protected sealed override void ProcessRecord()
         {
             try
             {

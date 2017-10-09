@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using PizzaMaster.Domain.Bestellungen.Entities;
+using PizzaMaster.Domain.Common;
 
 namespace PizzaMaster.Query.Bestellungen
 {
@@ -14,14 +15,14 @@ namespace PizzaMaster.Query.Bestellungen
             this.Id = artikel.Id.Value;
             this.Beschreibung = artikel.Beschreibung;
             this.Betrag = artikel.Betrag;
-            this.Benutzer = artikel.Benutzer?.Value;
+            this.Benutzer = artikel.Benutzer;
         }
 
-        public string Benutzer { get; set; }
+        public Benutzer Benutzer { get; set; }
 
         public string Beschreibung { get; private set; }
 
-        public decimal Betrag { get; private set; }
+        public Betrag Betrag { get; private set; }
 
         public string Id { get; private set; }
     }

@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using Autofac;
 using EventFlow;
 using EventFlow.Commands;
+using EventFlow.Extensions;
 using EventFlow.Queries;
 using EventFlow.ReadStores;
 using PizzaMaster.Domain.Bestellungen.Commands;
 using PizzaMaster.Domain.Common;
 using PizzaMaster.Domain.Konten;
 using PizzaMaster.Domain.Konten.Commands;
+using PizzaMaster.Query.Bestellungen;
 using PizzaMaster.Query.Konten;
 
 namespace PizzaMaster.Application.Client
@@ -40,11 +43,22 @@ namespace PizzaMaster.Application.Client
             this.container.Dispose();
         }
 
-        public BestellungModel BestellungBeginnen(string lieferdienst)
+        public BestellungModel BestellungBeginnen(string lieferdienst, DateTime datum = default(DateTime))
         {
-            var command = new BestellungBeginnenCommand(lieferdienst);
+            var command = new BestellungBeginnenCommand(lieferdienst, datum);
             this.Publish(command);
             return new BestellungModel(command.AggregateId, this);
+        }
+
+        public Benutzer[] GetBenutzer()
+        {
+            return this.Query(new GetBenutzerQuery());
+        }
+
+        public IEnumerable<BestellungModel> GetBestellungen()
+        {
+            var entities = this.Query(new GetAllBestellungenQuery());
+            return entities.Select(e => new BestellungModel(e, this));
         }
 
         public IEnumerable<KontoModel> GetKonten()
@@ -81,6 +95,7 @@ namespace PizzaMaster.Application.Client
             }
         }
 
+        [DebuggerStepThrough]
         public TResult Query<TResult>(IQuery<TResult> query)
         {
             try
@@ -92,6 +107,16 @@ namespace PizzaMaster.Application.Client
                 ExceptionDispatchInfo.Capture(e.InnerException).Throw();
                 throw;
             }
+        }
+
+        public void ResetReadModels()
+        {
+            this.populator.Purge<BenutzerReadModel>(CancellationToken.None);
+            this.populator.Purge<BestellungReadModel>(CancellationToken.None);
+            this.populator.Purge<KontoReadModel>(CancellationToken.None);
+            this.populator.Populate<BenutzerReadModel>(CancellationToken.None);
+            this.populator.Populate<BestellungReadModel>(CancellationToken.None);
+            this.populator.Populate<KontoReadModel>(CancellationToken.None);
         }
 
         public KontoModel TryGetKonto(Benutzer benutzer)

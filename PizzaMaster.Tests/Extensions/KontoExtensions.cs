@@ -2,21 +2,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using FluentAssertions.Equivalency;
 using PizzaMaster.Application.Client;
-using PizzaMaster.Domain.Konten;
+using PizzaMaster.Query.Konten;
 
 namespace PizzaMaster.Tests.Extensions
 {
     public static class KontoExtensions
     {
+        private static EquivalencyAssertionOptions<Transaktion> CompareTransaktion(
+            EquivalencyAssertionOptions<Transaktion> o)
+        {
+            return o.Excluding(t => t.Timestamp);
+        }
+
         public static void TransaktionenShouldBe(this KontoModel konto, params Transaktion[] transaktionen)
         {
-            konto.Transaktionen
-                 .ShouldAllBeEquivalentTo(transaktionen,
-                                          o => o.Including(t => t.Beschreibung)
-                                                .Including(t => t.Betrag)
-                                                .Including(t => t.Saldo)
-                                                .Including(t => t.Typ));
+            konto.LetzteTransaktion.ShouldBeEquivalentTo(transaktionen.Last(), CompareTransaktion);
+
+            konto.Transaktionen.ShouldAllBeEquivalentTo(transaktionen, CompareTransaktion);
         }
     }
 }

@@ -36,6 +36,12 @@ namespace PizzaMaster.Tests.Bestellungen
         }
 
         [Fact]
+        public void Query()
+        {
+            this.Client.GetBestellungen().Should().BeEmpty();
+        }
+
+        [Fact]
         public void Transaktionen()
         {
             var bestellungBeiEurasia = "Bestellung bei Eurasia";

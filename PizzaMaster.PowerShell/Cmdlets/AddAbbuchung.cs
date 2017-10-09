@@ -8,31 +8,36 @@ namespace PizzaMaster.PowerShell.Cmdlets
     [Cmdlet(VerbsCommon.Add, PizzaMasterNouns.Abbuchung, DefaultParameterSetName = "Default")]
     public class AddAbbuchung : PizzaMasterCmdletWithBenutzer
     {
-        protected override bool BenutzerIsMandatory => true;
-
-        private const string BetragKey = "Betrag";
         private const string BeschreibungKey = "Beschreibung";
 
-        private decimal Betrag => this.GetParameter<decimal>(BetragKey);
+        private const string BetragKey = "Betrag";
+
         private string Beschreibung => this.GetParameter<string>(BeschreibungKey);
+
+        private decimal Betrag => this.GetParameter<decimal>(BetragKey);
 
         protected override void AddParameters()
         {
             base.AddParameters();
-            this.AddParameter(BetragKey, typeof(decimal), 1, true, c => c.Add(new ValidateRangeAttribute(0.01, 100000)));
-            this.AddParameter(BeschreibungKey, typeof(string), 2, true, c => c.Add(new ValidateNotNullOrEmptyAttribute()));
+            this.AddParameter(BetragKey, typeof(decimal), 1, true,
+                              c => c.Add(new ValidateRangeAttribute(0.01, 100000)));
+            this.AddParameter(BeschreibungKey, typeof(string), 2, true,
+                              c => c.Add(new ValidateNotNullOrEmptyAttribute()));
         }
 
-        protected override void BeginOverride()
+        protected override void ProcessOverride()
         {
-            var konto = this.Client.TryGetKonto(this.Benutzer);
-            if (konto == null)
+            foreach (var benutzer in this.Benutzer)
             {
-                throw new Exception("Konto nicht gefunden.");
-            }
+                var konto = this.Client.TryGetKonto(benutzer);
+                if (konto == null)
+                {
+                    throw new Exception("Konto nicht gefunden.");
+                }
 
-            konto.Abbuchen(this.Betrag, this.Beschreibung);
-            this.WriteObject(konto);
+                konto.Abbuchen(this.Betrag, this.Beschreibung);
+                this.WriteObject(konto);
+            }
         }
     }
 }

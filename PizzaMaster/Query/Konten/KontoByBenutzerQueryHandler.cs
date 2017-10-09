@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using EventFlow.Queries;
-using PizzaMaster.Domain.Konten;
 
 namespace PizzaMaster.Query.Konten
 {
@@ -17,9 +16,11 @@ namespace PizzaMaster.Query.Konten
             this.store = store;
         }
 
-        public async Task<KontoReadModel> ExecuteQueryAsync(KontoByBenutzerQuery query, CancellationToken cancellationToken)
+        public async Task<KontoReadModel> ExecuteQueryAsync(
+            KontoByBenutzerQuery query,
+            CancellationToken cancellationToken)
         {
-            var benutzer = query.Benutzer.Value;
+            var benutzer = query.Benutzer;
             var models = (await this.store.FindAsync(m => m.Benutzer == benutzer && !m.IsAufgeloest, cancellationToken))
                 .ToArray();
             switch (models.Length)

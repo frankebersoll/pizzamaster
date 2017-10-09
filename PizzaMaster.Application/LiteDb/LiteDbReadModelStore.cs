@@ -39,7 +39,16 @@ namespace PizzaMaster.Application.LiteDb
 
             this.liteDatabase.DropCollection(readModelDescription.RootCollectionName.Value);
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteAsync(string id, CancellationToken cancellationToken)
+        {
+            var readModelDescription = this.readModelDescriptionProvider.GetReadModelDescription<TReadModel>();
+            var collection = this.liteDatabase.GetCollection<TReadModel>(readModelDescription.RootCollectionName.Value);
+
+            collection.Delete(r => r.Id == id);
+            return Task.CompletedTask;
         }
 
         public Task<ReadModelEnvelope<TReadModel>> GetAsync(string id, CancellationToken cancellationToken)

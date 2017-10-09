@@ -2,21 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using Autofac;
 using EventFlow;
 using EventFlow.Autofac.Extensions;
 using EventFlow.Configuration;
 using EventFlow.Core.Caching;
-using EventFlow.Extensions;
 using EventFlow.Logs;
-using EventFlow.ValueObjects;
 using LiteDB;
 using PizzaMaster.Application.Client;
 using PizzaMaster.Application.LiteDb;
 using PizzaMaster.Application.Serialization;
-using PizzaMaster.Domain.Bestellungen.Entities;
-using PizzaMaster.Domain.Konten;
 using PizzaMaster.Query.Bestellungen;
 using PizzaMaster.Query.Konten;
 
@@ -35,7 +30,9 @@ namespace PizzaMaster.Application
             this.options = EventFlowOptions.New
                                            .UseAutofacContainerBuilder(builder)
                                            .AddPizzaMasterDomain()
-                                           .RegisterServices(s => s.Register<IMemoryCache, DictionaryMemoryCache>(Lifetime.Singleton))
+                                           .RegisterServices(s =>
+                                                                 s.Register<IMemoryCache, DictionaryMemoryCache
+                                                                 >(Lifetime.Singleton))
                                            .UseSimpleJsonSerialization();
 
             this.container = new Lazy<IContainer>(() => this.options.CreateContainer());
@@ -58,17 +55,9 @@ namespace PizzaMaster.Application
             return this;
         }
 
-        private void UseLiteDbStores()
-        {
-            this.options
-                .UseLiteDbEventPersistance()
-                .UseLiteDbReadStoreFor<KontoReadModel>()
-                .UseLiteDbReadStoreFor<BestellungReadModel>();
-        }
-
         public IConfiguredApplication ConfigureLiteDb(string connectionString = "PizzaMaster.db")
         {
-            this.options.ConfigureLiteDb(connectionString);
+            this.options.ConfigureLiteDb(connectionString, CreateBsonMapper());
             this.UseLiteDbStores();
 
             return this;
@@ -76,7 +65,7 @@ namespace PizzaMaster.Application
 
         public IConfiguredApplication ConfigureLiteDb(Stream stream)
         {
-            this.options.ConfigureLiteDb(stream);
+            this.options.ConfigureLiteDb(stream, CreateBsonMapper());
             this.UseLiteDbStores();
 
             return this;
@@ -85,6 +74,23 @@ namespace PizzaMaster.Application
         public static PizzaMasterApplication Create()
         {
             return new PizzaMasterApplication();
+        }
+
+        private static BsonMapper CreateBsonMapper()
+        {
+            var mapper = new BsonMapper();
+            mapper.MapSimpleValueObjects();
+            return mapper;
+        }
+
+        private void UseLiteDbStores()
+        {
+            this.options
+                .UseLiteDbEventPersistance()
+                .UseLiteDbReadStoreFor<KontoReadModel>()
+                .UseLiteDbReadStoreFor<BestellungReadModel>()
+                .UseLiteDbReadStoreFor<BenutzerReadModel, BenutzerReadModelLocator>()
+                .RegisterServices(r => r.Register(c => new BenutzerReadModelLocator()));
         }
     }
 }

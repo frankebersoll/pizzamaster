@@ -10,24 +10,25 @@ namespace PizzaMaster.PowerShell
     public abstract class PizzaMasterCmdletWithBenutzer : PizzaMasterCmdlet, IDynamicParameters
     {
         private const string BenutzerKey = "Benutzer";
-
         private RuntimeDefinedParameterDictionary parameters;
 
-        protected Benutzer Benutzer
+        protected Benutzer[] Benutzer
         {
             get
             {
-                var benutzer = this.GetParameter<string>(BenutzerKey);
-                return benutzer != null ? new Benutzer(benutzer) : null;
+                var benutzer = this.GetParameter<string[]>(BenutzerKey);
+                return benutzer?.Select(b => new Benutzer(b)).ToArray();
             }
         }
 
-        protected virtual bool BenutzerIsMandatory => false;
-
         public object GetDynamicParameters()
         {
-            this.parameters = new RuntimeDefinedParameterDictionary();
-            this.AddParameters();
+            if (this.parameters == null)
+            {
+                this.parameters = new RuntimeDefinedParameterDictionary();
+                this.AddParameters();
+            }
+
             return this.parameters;
         }
 
@@ -36,31 +37,49 @@ namespace PizzaMaster.PowerShell
             Type type,
             int position,
             bool isMandatory,
-            Action<Collection<Attribute>> additionalAttributes = null)
+            Action<Collection<Attribute>> additionalAttributes = null,
+            string set = null,
+            bool fromPipeline = false)
         {
             var attributes = new Collection<Attribute>
                              {
                                  new ParameterAttribute
                                  {
                                      Position = position,
-                                     Mandatory = isMandatory
+                                     Mandatory = isMandatory,
+                                     ParameterSetName = set,
+                                     ValueFromPipelineByPropertyName = fromPipeline
                                  }
                              };
 
             additionalAttributes?.Invoke(attributes);
-            this.parameters.Add(key, new RuntimeDefinedParameter(key, type, attributes));
+            var runtimeParameter = new RuntimeDefinedParameter(key, type, attributes);
+            this.parameters[key] = runtimeParameter;
         }
 
         protected virtual void AddParameters()
         {
-            var benutzer = this.GetClient().GetKonten().Select(k => k.Benutzer.Value).ToArray();
-            var validateSet = new ValidateSetAttribute(benutzer);
-            this.AddParameter(BenutzerKey, typeof(string), 0, this.BenutzerIsMandatory, p => p.Add(validateSet));
+            var benutzer = this.GetClient().GetBenutzer().Select(b => b.Value).ToArray();
+            if (benutzer.Any())
+            {
+                var validateSet = new ValidateSetAttribute(benutzer);
+                this.AddParameter(BenutzerKey, typeof(string[]), 0, true, p => p.Add(validateSet), "Benutzer", true);
+            }
         }
 
         protected T GetParameter<T>(string key)
         {
-            return (T)this.parameters?[key].Value;
+            if (this.parameters != null)
+            {
+                if (this.parameters.TryGetValue(key, out var parameter))
+                {
+                    var value = parameter?.Value;
+                    if (value != null)
+                        return (T) value;
+                }
+            }
+
+            return default(T);
         }
     }
 }

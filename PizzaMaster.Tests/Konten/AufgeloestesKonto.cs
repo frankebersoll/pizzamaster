@@ -30,6 +30,12 @@ namespace PizzaMaster.Tests.Konten
         }
 
         [Fact]
+        public void Benutzer()
+        {
+            this.Client.GetBenutzer().Should().BeEmpty();
+        }
+
+        [Fact]
         public void EinzahlenKnallt()
         {
             Action action = () => this.Konto.Einzahlen(20);

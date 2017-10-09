@@ -17,5 +17,10 @@ namespace PizzaMaster.Domain.Konten.Events
         public Betrag Betrag { get; }
 
         public decimal Saldo { get; }
+
+        public static bool IsTransaktion(IDomainEvent e)
+        {
+            return typeof(TransaktionEvent).IsAssignableFrom(e.EventType);
+        }
     }
 }

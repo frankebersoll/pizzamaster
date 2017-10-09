@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using EventFlow.Queries;
-using PizzaMaster.Domain.Konten;
 
 namespace PizzaMaster.Query.Konten
 {

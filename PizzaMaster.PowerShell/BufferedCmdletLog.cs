@@ -53,16 +53,16 @@ namespace PizzaMaster.PowerShell
 
         public void StartLogging(PizzaMasterCmdlet cmdlet)
         {
-            this.stack.Push(cmdlet);
+            //this.stack.Push(cmdlet);
         }
 
         public void StopLogging(PizzaMasterCmdlet cmdlet)
         {
-            var target = this.stack.Pop();
-            if (target != cmdlet)
-                throw new InvalidOperationException();
+            //var target = this.stack.Pop();
+            //if (target != cmdlet)
+            //    throw new InvalidOperationException();
 
-            this.Flush(cmdlet);
+            //this.Flush(cmdlet);
         }
 
         protected override void Write(LogLevel logLevel, string format, params object[] args)

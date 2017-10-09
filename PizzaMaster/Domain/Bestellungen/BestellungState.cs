@@ -23,6 +23,8 @@ namespace PizzaMaster.Domain.Bestellungen
 
         public IEnumerable<Artikel> Artikel => this.artikel.ToImmutableList();
 
+        public DateTime Datum { get; private set; }
+
         public bool IstAbgeschlossen { get; private set; }
 
         public string Lieferdienst { get; private set; }
@@ -56,6 +58,7 @@ namespace PizzaMaster.Domain.Bestellungen
         public void Apply(BestellungBegonnen aggregateEvent)
         {
             this.Lieferdienst = aggregateEvent.Lieferdienst;
+            this.Datum = aggregateEvent.Datum;
         }
 
         public void Apply(BestellungBezahlt e)

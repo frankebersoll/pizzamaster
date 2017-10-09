@@ -15,7 +15,7 @@ namespace PizzaMaster.Domain.Bestellungen.Commands
             BestellungBeginnenCommand command,
             CancellationToken cancellationToken)
         {
-            aggregate.Beginnen(command.Lieferdienst);
+            aggregate.Beginnen(command.Lieferdienst, command.Datum);
             return Task.CompletedTask;
         }
     }

@@ -2,15 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using PizzaMaster.Domain.Konten;
 
 namespace PizzaMaster.PowerShell.Cmdlets
 {
     [Cmdlet(VerbsCommon.Add, PizzaMasterNouns.Einzahlung)]
     public class AddEinzahlung : PizzaMasterCmdletWithBenutzer
     {
+        private const string ArtKey = "Art";
         private const string BetragKey = "Betrag";
 
-        protected override bool BenutzerIsMandatory => true;
+        private Einzahlungsart Art => this.GetParameter<Einzahlungsart>(ArtKey);
 
         private decimal Betrag => this.GetParameter<decimal>(BetragKey);
 
@@ -19,18 +21,22 @@ namespace PizzaMaster.PowerShell.Cmdlets
             base.AddParameters();
             this.AddParameter(BetragKey, typeof(decimal), 1, true,
                               c => c.Add(new ValidateRangeAttribute(0.01, 100000)));
+            this.AddParameter(ArtKey, typeof(Einzahlungsart), 2, false);
         }
 
-        protected override void BeginOverride()
+        protected override void ProcessOverride()
         {
-            var konto = this.Client.TryGetKonto(this.Benutzer);
-            if (konto == null)
+            foreach (var benutzer in this.Benutzer)
             {
-                throw new Exception("Konto nicht gefunden.");
-            }
+                var konto = this.Client.TryGetKonto(benutzer);
+                if (konto == null)
+                {
+                    throw new Exception("Konto nicht gefunden.");
+                }
 
-            konto.Einzahlen(this.Betrag);
-            this.WriteObject(konto);
+                konto.Einzahlen(this.Betrag, this.Art);
+                this.WriteObject(konto);
+            }
         }
     }
 }

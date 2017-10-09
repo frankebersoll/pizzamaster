@@ -26,6 +26,11 @@ namespace PizzaMaster.Tests
             return this.inner.DeleteAllAsync(cancellationToken);
         }
 
+        public Task DeleteAsync(string id, CancellationToken cancellationToken)
+        {
+            return this.inner.DeleteAsync(id, cancellationToken);
+        }
+
         public Task<ReadModelEnvelope<TReadModel>> GetAsync(string id, CancellationToken cancellationToken)
         {
             return this.inner.GetAsync(id, cancellationToken);

@@ -18,6 +18,8 @@ namespace PizzaMaster.Query.Bestellungen
     {
         public ArtikelReadModelCollection Artikel { get; private set; } = new ArtikelReadModelCollection();
 
+        public DateTime Datum { get; private set; }
+
         public bool IstAbgeschlossen { get; private set; }
 
         public string Lieferdienst { get; private set; }
@@ -27,7 +29,7 @@ namespace PizzaMaster.Query.Bestellungen
             IDomainEvent<BestellungAggregate, BestellungId, ArtikelBenutzerZugeordnet> domainEvent)
         {
             var zugeordnet = domainEvent.AggregateEvent;
-            this.Artikel[zugeordnet.ArtikelId.Value].Benutzer = zugeordnet.Benutzer.Value;
+            this.Artikel[zugeordnet.ArtikelId.Value].Benutzer = zugeordnet.Benutzer;
         }
 
         public void Apply(
@@ -64,10 +66,12 @@ namespace PizzaMaster.Query.Bestellungen
             IReadModelContext context,
             IDomainEvent<BestellungAggregate, BestellungId, BestellungBegonnen> domainEvent)
         {
+            this.Id = domainEvent.AggregateIdentity.Value;
             this.Lieferdienst = domainEvent.AggregateEvent.Lieferdienst;
+            this.Datum = domainEvent.AggregateEvent.Datum;
         }
 
-        public string Id { get; }
+        public string Id { get; private set; }
 
         public long? Version { get; set; }
     }

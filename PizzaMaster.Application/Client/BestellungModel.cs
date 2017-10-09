@@ -14,9 +14,16 @@ namespace PizzaMaster.Application.Client
     {
         public BestellungModel(BestellungId id, PizzaMasterClient client) : base(client, id) { }
 
+        public BestellungModel(BestellungReadModel readModel, PizzaMasterClient client) :
+            base(client, new BestellungId(readModel.Id), readModel) { }
+
         public ArtikelModel[] Artikel => this.ReadModel.Artikel.Select(a => new ArtikelModel(a, this)).ToArray();
 
+        public DateTime Datum => this.ReadModel.Datum;
+
         public bool IstAbgeschlossen => this.ReadModel.IstAbgeschlossen;
+
+        public string Lieferdienst => this.ReadModel.Lieferdienst;
 
         public void Abbrechen()
         {

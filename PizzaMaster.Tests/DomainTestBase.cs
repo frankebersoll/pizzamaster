@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using EventFlow.Aggregates;
 using PizzaMaster.Application;
 using PizzaMaster.Application.Client;
 using PizzaMaster.Domain.Common;
 using PizzaMaster.Domain.Konten;
-using Xunit;
+using PizzaMaster.Query.Konten;
 using Xunit.Abstractions;
 
 namespace PizzaMaster.Tests
@@ -36,13 +35,17 @@ namespace PizzaMaster.Tests
 
         protected static Transaktion Abbuchung(decimal betrag, decimal saldo, string beschreibung)
         {
-            return new Transaktion(EventId.New, DateTimeOffset.Now, Transaktionstyp.Abbuchung, betrag, saldo,
+            return new Transaktion(DateTimeOffset.Now, Transaktionstyp.Abbuchung, betrag, saldo,
                                    beschreibung);
         }
 
-        protected static Transaktion Einzahlung(decimal betrag, decimal saldo)
+        protected static Transaktion Einzahlung(
+            decimal betrag,
+            decimal saldo,
+            Einzahlungsart einzahlungsart = Einzahlungsart.Bareinzahlung)
         {
-            return new Transaktion(EventId.New, DateTimeOffset.Now, Transaktionstyp.Einzahlung, betrag, saldo);
+            return new Transaktion(DateTimeOffset.Now, Transaktionstyp.Einzahlung, betrag, saldo,
+                                   einzahlungsart.ToString());
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using EventFlow;
 using EventFlow.Configuration;
 using EventFlow.EventStores;

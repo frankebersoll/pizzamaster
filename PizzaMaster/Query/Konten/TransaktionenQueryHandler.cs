@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EventFlow.Aggregates;
 using EventFlow.EventStores;
 using EventFlow.Queries;
 using PizzaMaster.Domain.Konten;
@@ -25,27 +24,9 @@ namespace PizzaMaster.Query.Konten
             CancellationToken cancellationToken)
         {
             var events = await this.eventStore.LoadEventsAsync<KontoAggregate, KontoId>(query.Konto, cancellationToken);
-            return this.CreateTransaktionen(events);
-        }
-
-        private IEnumerable<Transaktion> CreateTransaktionen(IEnumerable<IDomainEvent<KontoAggregate, KontoId>> events)
-        {
-            foreach (var domainEvent in events)
-            {
-                var aggregateEvent = domainEvent.GetAggregateEvent();
-                var eventId = domainEvent.Metadata.EventId;
-                var timestamp = domainEvent.Timestamp;
-
-                switch (aggregateEvent)
-                {
-                    case Eingezahlt eingezahlt:
-                        yield return new Transaktion(eventId, timestamp, eingezahlt);
-                        break;
-                    case Abgebucht abgebucht:
-                        yield return new Transaktion(eventId, timestamp, abgebucht);
-                        break;
-                }
-            }
+            return events
+                .Where(TransaktionEvent.IsTransaktion)
+                .Select(Transaktion.FromEvent);
         }
     }
 }

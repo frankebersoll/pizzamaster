@@ -22,6 +22,17 @@ namespace PizzaMaster.Domain.Bestellungen
 
         public bool IstAbgeschlossen => this.state.IstAbgeschlossen;
 
+        public void Abbrechen()
+        {
+            Specs.Existiert.ThrowDomainErrorIfNotStatisfied(this);
+
+            ArtikelSpecs.Status(ArtikelStatus.Offen)
+                        .ForAll()
+                        .ThrowDomainErrorIfNotStatisfied(this.Artikel);
+
+            this.Emit(new BestellungAbgebrochen());
+        }
+
         public void Abschliessen()
         {
             BestellungSpecs.NichtAbgeschlossen
@@ -42,7 +53,8 @@ namespace PizzaMaster.Domain.Bestellungen
             {
                 var beschreibung = $"Bestellung bei {this.state.Lieferdienst}";
                 var betrag = artikelNachBenutzer.Sum(a => a.Betrag);
-                var e = new BezahlungAngefordert(artikelNachBenutzer.Key, beschreibung, betrag);
+                var datum = this.state.Datum;
+                var e = new BezahlungAngefordert(artikelNachBenutzer.Key, beschreibung, betrag, datum);
                 this.Emit(e);
             }
 
@@ -50,6 +62,17 @@ namespace PizzaMaster.Domain.Bestellungen
             {
                 this.Emit(new BestellungAbgeschlossen());
             }
+        }
+
+        public void ArtikelEntfernen(ArtikelId artikelId)
+        {
+            Specs.Existiert.ThrowDomainErrorIfNotStatisfied(this);
+
+            var artikel = this.state.GetArtikel(artikelId);
+            ArtikelSpecs.Status(ArtikelStatus.Offen)
+                        .ThrowDomainErrorIfNotStatisfied(artikel);
+
+            this.Emit(new ArtikelEntfernt(artikelId));
         }
 
         public void ArtikelHinzufuegen(Betrag betrag, string beschreibung, Benutzer benutzer = null)
@@ -70,14 +93,19 @@ namespace PizzaMaster.Domain.Bestellungen
             ArtikelSpecs.Status(ArtikelStatus.Offen)
                         .ThrowDomainErrorIfNotStatisfied(artikel);
 
-            this.Emit(new ArtikelBenutzerZugeordnet(artikelId, benutzer));
+            if (artikel.Benutzer != benutzer)
+            {
+                this.Emit(new ArtikelBenutzerZugeordnet(artikelId, benutzer));
+            }
         }
 
-        public void Beginnen(string lieferdienst)
+        public void Beginnen(string lieferdienst, DateTime datum = default(DateTime))
         {
             Specs.IstNeu.ThrowDomainErrorIfNotStatisfied(this);
 
-            this.Emit(new BestellungBegonnen(lieferdienst));
+            if (datum == default(DateTime)) datum = DateTime.Now;
+
+            this.Emit(new BestellungBegonnen(lieferdienst, datum));
         }
 
         public void BezahlungAbschliessen(Benutzer benutzer)
@@ -96,28 +124,6 @@ namespace PizzaMaster.Domain.Bestellungen
             {
                 this.Emit(new BestellungAbgeschlossen());
             }
-        }
-
-        public void ArtikelEntfernen(ArtikelId artikelId)
-        {
-            Specs.Existiert.ThrowDomainErrorIfNotStatisfied(this);
-
-            var artikel = this.state.GetArtikel(artikelId);
-            ArtikelSpecs.Status(ArtikelStatus.Offen)
-                        .ThrowDomainErrorIfNotStatisfied(artikel);
-
-            this.Emit(new ArtikelEntfernt(artikelId));
-        }
-
-        public void Abbrechen()
-        {
-            Specs.Existiert.ThrowDomainErrorIfNotStatisfied(this);
-
-            ArtikelSpecs.Status(ArtikelStatus.Offen)
-                        .ForAll()
-                        .ThrowDomainErrorIfNotStatisfied(this.Artikel);
-
-            this.Emit(new BestellungAbgebrochen());
         }
     }
 }

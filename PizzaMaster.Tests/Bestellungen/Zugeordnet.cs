@@ -1,7 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
-using PizzaMaster.Domain.Bestellungen.Entities;
-using PizzaMaster.Domain.Konten;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,6 +20,14 @@ namespace PizzaMaster.Tests.Bestellungen
         }
 
         [Fact]
+        public void Abbrechen()
+        {
+            this.Bestellung.Abbrechen();
+            this.Bestellung.IstAbgeschlossen.Should().BeTrue();
+            this.GetKonto(Frank).Transaktionen.Should().BeEmpty();
+        }
+
+        [Fact]
         public void Entfernen()
         {
             this.Bestellung.Artikel.First().Entfernen();
@@ -28,11 +36,9 @@ namespace PizzaMaster.Tests.Bestellungen
         }
 
         [Fact]
-        public void Abbrechen()
+        public void Query()
         {
-            this.Bestellung.Abbrechen();
-            this.Bestellung.IstAbgeschlossen.Should().BeTrue();
-            this.GetKonto(Frank).Transaktionen.Should().BeEmpty();
+            this.Client.GetBestellungen().Should().ContainSingle();
         }
     }
 }

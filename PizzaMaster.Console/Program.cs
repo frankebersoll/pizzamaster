@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PizzaMaster.Application;
 using PizzaMaster.Domain.Common;
+using PizzaMaster.Domain.Konten;
 
 namespace PizzaMaster.Console
 {
@@ -12,13 +13,19 @@ namespace PizzaMaster.Console
         {
             using (var client = PizzaMasterApplication.Create().ConfigureLiteDb().Run())
             {
-                var frank = new Benutzer("Frank");
+                var k = client.GetOrCreateKonto(new Benutzer("alex"));
 
-                var konto = client.TryGetKonto(frank) ?? client.KontoEroeffnen(frank);
-                konto.Einzahlen(20);
-                konto.Abbuchen(5, "Blah");
-                System.Console.ReadLine();
+                k.Einzahlen(123);
+                k.Einzahlen(2, Einzahlungsart.PayPal);
+
+                var konten = client.GetKonten();
+                foreach (var transaktion in konten.SelectMany(ko => ko.Transaktionen))
+                {
+                    System.Console.WriteLine(transaktion.Beschreibung + " " + transaktion.Betrag);
+                }
             }
+
+            System.Console.ReadLine();
         }
     }
 }

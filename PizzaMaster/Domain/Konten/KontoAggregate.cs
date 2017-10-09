@@ -41,14 +41,14 @@ namespace PizzaMaster.Domain.Konten
             this.Emit(new KontoAufgeloest());
         }
 
-        public void Einzahlen(Betrag betrag)
+        public void Einzahlen(Betrag betrag, Einzahlungsart einzahlungsart)
         {
             KontoSpecs.NichtAufgeloest
                       .And(Specs.Existiert)
                       .ThrowDomainErrorIfNotStatisfied(this);
 
             var neuerSaldo = this.Saldo + betrag;
-            this.Emit(new Eingezahlt(betrag, neuerSaldo));
+            this.Emit(new Eingezahlt(betrag, neuerSaldo, einzahlungsart));
         }
 
         public void Eroeffnen(Benutzer benutzer)

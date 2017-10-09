@@ -14,7 +14,7 @@ namespace PizzaMaster.Domain.Konten.Commands
             EinzahlenCommand command,
             CancellationToken cancellationToken)
         {
-            aggregate.Einzahlen(command.Betrag);
+            aggregate.Einzahlen(command.Betrag, command.Einzahlungsart);
             return Task.CompletedTask;
         }
     }

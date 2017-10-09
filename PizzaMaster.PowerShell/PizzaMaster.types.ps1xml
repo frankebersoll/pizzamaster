@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Types>
+  <Type>
+    <Name>PizzaMaster.Query.Konten.Transaktion</Name>
+    <Members>
+      <ScriptMethod>
+        <Name>ToString</Name>
+        <Script>
+          "{0:+0.00;-0.00} {1}: {2}" -f $this.Wert,
+          [PizzaMaster.PowerShell.DateExtensions]::ToRelativeString($this.Timestamp),
+          $this.Beschreibung
+        </Script>
+      </ScriptMethod>
+    </Members>
+  </Type>
+</Types>

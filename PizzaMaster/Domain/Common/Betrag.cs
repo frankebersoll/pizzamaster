@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using EventFlow.ValueObjects;
 
 namespace PizzaMaster.Domain.Common
@@ -19,6 +21,11 @@ namespace PizzaMaster.Domain.Common
         public static implicit operator decimal(Betrag betrag)
         {
             return betrag.Value;
+        }
+
+        public override string ToString()
+        {
+            return this.Value.ToString("F2");
         }
     }
 }

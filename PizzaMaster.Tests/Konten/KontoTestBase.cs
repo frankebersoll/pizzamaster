@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using PizzaMaster.Application.Client;
+using PizzaMaster.Query.Konten;
 using Xunit.Abstractions;
 
 namespace PizzaMaster.Tests.Konten
@@ -12,6 +14,14 @@ namespace PizzaMaster.Tests.Konten
 
         protected KontoTestBase(ITestOutputHelper output) : base(output)
         {
+            AssertionOptions.AssertEquivalencyUsing(o =>
+            {
+                o.Using<Transaktion>(t => t.Subject.ShouldBeEquivalentTo(t.Expectation,
+                                                                         x => x.Excluding(p => p.Timestamp)))
+                 .WhenTypeIs<Transaktion>();
+                return o;
+            });
+
             this.Konto = this.CreateKonto();
         }
 

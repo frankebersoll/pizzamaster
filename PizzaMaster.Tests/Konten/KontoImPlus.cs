@@ -33,6 +33,12 @@ namespace PizzaMaster.Tests.Konten
         }
 
         [Fact]
+        public void Benutzer()
+        {
+            this.Client.GetBenutzer().ShouldBeEquivalentTo(new[] {Benni});
+        }
+
+        [Fact]
         public void Einzahlen()
         {
             this.Konto.Einzahlen(20);
@@ -43,16 +49,16 @@ namespace PizzaMaster.Tests.Konten
         }
 
         [Fact]
-        public void NegativenBetragEinzahlenKnallt()
+        public void NegativenBetragAbbuchenKnallt()
         {
-            Action action = () => this.Konto.Einzahlen(-5);
+            Action action = () => this.Konto.Abbuchen(-5, "Knödel");
             action.ShouldThrow<ArgumentOutOfRangeException>();
         }
 
         [Fact]
-        public void NegativenBetragAbbuchenKnallt()
+        public void NegativenBetragEinzahlenKnallt()
         {
-            Action action = () => this.Konto.Abbuchen(-5, "Knödel");
+            Action action = () => this.Konto.Einzahlen(-5);
             action.ShouldThrow<ArgumentOutOfRangeException>();
         }
     }

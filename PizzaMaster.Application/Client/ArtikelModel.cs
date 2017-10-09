@@ -9,29 +9,30 @@ namespace PizzaMaster.Application.Client
 {
     public class ArtikelModel
     {
-        private readonly BestellungModel bestellung;
-        private readonly string id;
+        private readonly ArtikelReadModel readModel;
 
         public ArtikelModel(ArtikelReadModel readModel, BestellungModel bestellung)
         {
-            this.id = readModel.Id;
-            this.bestellung = bestellung;
-            this.Benutzer = readModel.Benutzer;
-            this.Betrag = readModel.Betrag;
+            this.readModel = readModel;
+            this.Bestellung = bestellung;
         }
 
-        public string Benutzer { get; }
+        public Benutzer Benutzer => this.readModel.Benutzer;
 
-        public decimal Betrag { get; }
+        public string Beschreibung => this.readModel.Beschreibung;
+
+        public BestellungModel Bestellung { get; }
+
+        public Betrag Betrag => this.readModel.Betrag;
 
         public void Entfernen()
         {
-            this.bestellung.ArtikelEntfernen(new ArtikelId(this.id));
+            this.Bestellung.ArtikelEntfernen(new ArtikelId(this.readModel.Id));
         }
 
         public void Zuordnen(Benutzer benutzer)
         {
-            this.bestellung.ArtikelZuordnen(new ArtikelId(this.id), benutzer);
+            this.Bestellung.ArtikelZuordnen(new ArtikelId(this.readModel.Id), benutzer);
         }
     }
 }
