@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EventFlow.Exceptions;
 using FluentAssertions;
+using PizzaMaster.Domain.Bestellungen.Commands;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -24,6 +25,20 @@ namespace PizzaMaster.Tests.Bestellungen
         {
             Action action = () => this.Bestellung.Abschliessen();
             action.ShouldThrow<DomainError>();
+        }
+
+        [Fact]
+        public void ZuordnenOhneBenutzerKnallt()
+        {
+            Action action = () => this.Bestellung.Artikel[0].Zuordnen(null);
+            action.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ZuordnenOhneArtikelKnallt()
+        {
+            Action action = () => new ArtikelZuordnenCommand(this.Bestellung.Id, null, Benni);
+            action.ShouldThrow<ArgumentNullException>();
         }
 
         [Fact]

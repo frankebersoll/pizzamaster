@@ -84,7 +84,6 @@ namespace PizzaMaster.Domain.Bezahlen
         private void PublishAbbuchenCommand(KontoId konto, string beschreibung, Betrag betrag)
         {
             var command = new AbbuchenCommand(konto, betrag, beschreibung, this.Id);
-
             this.Publish(command);
         }
     }

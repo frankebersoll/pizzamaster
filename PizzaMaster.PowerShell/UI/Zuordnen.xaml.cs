@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -9,16 +8,8 @@ using System.Windows.Media.Animation;
 
 namespace PizzaMaster.PowerShell.UI
 {
-    public partial class Zuordnen
+    public partial class Zuordnen : Window
     {
-        public enum MapType : uint
-        {
-            MAPVK_VK_TO_VSC = 0x0,
-            MAPVK_VSC_TO_VK = 0x1,
-            MAPVK_VK_TO_CHAR = 0x2,
-            MAPVK_VSC_TO_VK_EX = 0x3
-        }
-
         private readonly ZuordnenViewModel viewModel;
 
         public Zuordnen(ZuordnenViewModel viewModel)
@@ -27,7 +18,7 @@ namespace PizzaMaster.PowerShell.UI
 
             this.DataContext = viewModel;
             this.viewModel = viewModel;
-            this.InitializeComponent();
+            ((dynamic)this).InitializeComponent();
             this.PreviewKeyDown += this.OnPreviewKeyDown;
             this.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 0.9, new Duration(TimeSpan.FromSeconds(0.2))));
         }
@@ -38,13 +29,14 @@ namespace PizzaMaster.PowerShell.UI
 
             int virtualKey = KeyInterop.VirtualKeyFromKey(key);
             byte[] keyboardState = new byte[256];
-            GetKeyboardState(keyboardState);
+            NativeMethods.GetKeyboardState(keyboardState);
 
-            uint scanCode = MapVirtualKey((uint) virtualKey, MapType.MAPVK_VK_TO_VSC);
+            uint scanCode = NativeMethods.MapVirtualKey((uint) virtualKey, NativeMethods.MapType.MAPVK_VK_TO_VSC);
             StringBuilder stringBuilder = new StringBuilder(2);
 
-            int result = ToUnicode((uint) virtualKey, scanCode, keyboardState, stringBuilder, stringBuilder.Capacity,
-                                   0);
+            int result = NativeMethods.ToUnicode((uint) virtualKey, scanCode, keyboardState, stringBuilder,
+                                                 stringBuilder.Capacity,
+                                                 0);
             switch (result)
             {
                 case -1:
@@ -64,12 +56,6 @@ namespace PizzaMaster.PowerShell.UI
             }
             return ch;
         }
-
-        [DllImport("user32.dll")]
-        public static extern bool GetKeyboardState(byte[] lpKeyState);
-
-        [DllImport("user32.dll")]
-        public static extern uint MapVirtualKey(uint uCode, MapType uMapType);
 
         private void OnFinished(object sender, EventArgs e)
         {
@@ -108,14 +94,5 @@ namespace PizzaMaster.PowerShell.UI
 
             e.Handled = true;
         }
-
-        [DllImport("user32.dll")]
-        public static extern int ToUnicode(
-            uint wVirtKey,
-            uint wScanCode,
-            byte[] lpKeyState,
-            [Out, MarshalAs(UnmanagedType.LPWStr, SizeParamIndex = 4)] StringBuilder pwszBuff,
-            int cchBuff,
-            uint wFlags);
     }
 }

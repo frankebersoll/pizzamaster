@@ -1,12 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>    
-    <TargetFramework>netcoreapp2.0</TargetFramework>      
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="EventFlow" Version="0.49.3031" />
     <PackageReference Include="FluentAssertions" Version="4.19.4" />
+    <PackageReference Include="Microsoft.CodeCoverage" Version="1.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <PackageReference Include="xunit" Version="2.3.0-beta2-build3683" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />

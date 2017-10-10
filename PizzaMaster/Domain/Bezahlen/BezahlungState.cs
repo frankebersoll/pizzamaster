@@ -4,7 +4,6 @@ using System.Linq;
 using EventFlow.Aggregates;
 using PizzaMaster.Domain.Bezahlen.Events;
 using PizzaMaster.Domain.Common;
-using PizzaMaster.Domain.Konten;
 
 namespace PizzaMaster.Domain.Bezahlen
 {
@@ -17,8 +16,6 @@ namespace PizzaMaster.Domain.Bezahlen
 
         public Betrag Betrag { get; private set; }
 
-        public KontoId Konto { get; private set; }
-
         public void Apply(BezahlungAbgeschlossen aggregateEvent) { }
 
         public void Apply(BezahlungBegonnen aggregateEvent)
@@ -29,7 +26,6 @@ namespace PizzaMaster.Domain.Bezahlen
 
         public void Apply(KontoZugeordnet aggregateEvent)
         {
-            this.Konto = aggregateEvent.KontoId;
         }
     }
 }

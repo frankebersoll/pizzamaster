@@ -90,6 +90,7 @@
     <Compile Include="BufferedCmdletLog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rechnung.cs" />
+    <Compile Include="UI\NativeMethods.cs" />
     <Compile Include="UI\Zuordnen.xaml.cs">
       <DependentUpon>Zuordnen.xaml</DependentUpon>
     </Compile>
