@@ -1,0 +1,318 @@
+return options.AddDefaults(PizzaMasterAssembly);
+this.inner = specification;
+if (obj == null) throw new ArgumentNullException(nameof(obj));
+return obj.SelectMany(o => this.inner.WhyIsNotSatisfiedBy(o));
+return new ForAllSpecification<T>(specification);
+if (obj.IsNew)
+yield return $"Aggregate '{obj.Name}' with ID '{obj.GetIdentity()}' is new";
+return item.Id;
+this.status = status;
+if (obj.Status != this.status)
+yield return $"Artikel ist nicht im Zustand {this.status}.";
+if (!artikel.IstZugeordnet)
+yield return "Artikel wurden keinem Benutzer zugeordnet.";
+this.Register(this.state);
+Specs.Existiert.ThrowDomainErrorIfNotStatisfied(this);
+ArtikelSpecs.Status(ArtikelStatus.Offen)
+.ForAll()
+.ThrowDomainErrorIfNotStatisfied(this.Artikel);
+this.Emit(new BestellungAbgebrochen());
+BestellungSpecs.NichtAbgeschlossen
+.And(Specs.Existiert)
+.ThrowDomainErrorIfNotStatisfied(this);
+ArtikelSpecs.Zugeordnet
+.And(ArtikelSpecs.Status(ArtikelStatus.Offen))
+.ForAll()
+.ThrowDomainErrorIfNotStatisfied(this.Artikel);
+var zugeordneteArtikel = (from artikel in this.Artikel
+group artikel by artikel.Benutzer
+into artikelNachBenutzer
+select artikelNachBenutzer).ToArray();
+foreach (var artikelNachBenutzer in zugeordneteArtikel)
+var beschreibung = $"Bestellung bei {this.state.Lieferdienst}";
+var betrag = artikelNachBenutzer.Sum(a => a.Betrag);
+var datum = this.state.Datum;
+var e = new BezahlungAngefordert(artikelNachBenutzer.Key, beschreibung, betrag, datum);
+this.Emit(e);
+if (!zugeordneteArtikel.Any())
+this.Emit(new BestellungAbgeschlossen());
+Specs.Existiert.ThrowDomainErrorIfNotStatisfied(this);
+var artikel = this.state.GetArtikel(artikelId);
+ArtikelSpecs.Status(ArtikelStatus.Offen)
+.ThrowDomainErrorIfNotStatisfied(artikel);
+this.Emit(new ArtikelEntfernt(artikelId));
+BestellungSpecs.NichtAbgeschlossen
+.And(Specs.Existiert)
+.ThrowDomainErrorIfNotStatisfied(this);
+var artikel = new Artikel(ArtikelId.New, betrag, beschreibung, benutzer);
+this.Emit(new ArtikelHinzugefuegt(artikel));
+Specs.Existiert.ThrowDomainErrorIfNotStatisfied(this);
+var artikel = this.state.GetArtikel(artikelId);
+ArtikelSpecs.Status(ArtikelStatus.Offen)
+.ThrowDomainErrorIfNotStatisfied(artikel);
+if (artikel.Benutzer != benutzer)
+this.Emit(new ArtikelBenutzerZugeordnet(artikelId, benutzer));
+Specs.IstNeu.ThrowDomainErrorIfNotStatisfied(this);
+if (datum == default(DateTime)) datum = DateTime.Now;
+this.Emit(new BestellungBegonnen(lieferdienst, datum));
+Specs.Existiert.ThrowDomainErrorIfNotStatisfied(this);
+var artikel = this.Artikel.Where(a => a.Benutzer == benutzer);
+ArtikelSpecs.Zugeordnet
+.And(ArtikelSpecs.Status(ArtikelStatus.BezahlungAngefordert))
+.ForAll()
+.ThrowDomainErrorIfNotStatisfied(artikel);
+this.Emit(new BestellungBezahlt(benutzer));
+if (this.Artikel.All(a => a.Status == ArtikelStatus.Bezahlt))
+this.Emit(new BestellungAbgeschlossen());
+if (obj.IstAbgeschlossen)
+yield return "Bestellung ist bereits abgeschlossen.";
+var id = e.ArtikelId;
+this.UpdateArtikel(id, a => a.Benutzer = e.Benutzer);
+this.artikel.Remove(aggregateEvent.ArtikelId);
+this.artikel.Add(aggregateEvent.Artikel);
+this.IstAbgeschlossen = true;
+this.IstAbgeschlossen = true;
+this.Lieferdienst = aggregateEvent.Lieferdienst;
+this.Datum = aggregateEvent.Datum;
+this.UpdateArtikel(e.Benutzer, a => a.Status = ArtikelStatus.Bezahlt);
+this.UpdateArtikel(e.Benutzer, a => a.Status = ArtikelStatus.BezahlungAngefordert);
+if (this.artikel.Contains(id))
+action(this.artikel[id]);
+var artikel = this.artikel.Where(a => a.Benutzer == benutzer);
+foreach (var a in artikel)
+action(a);
+this.ArtikelId = artikelId ?? throw new ArgumentNullException(nameof(artikelId));
+aggregate.ArtikelEntfernen(command.ArtikelId);
+return Task.CompletedTask;
+if (string.IsNullOrWhiteSpace(beschreibung))
+throw new ArgumentException("Value cannot be null or whitespace.", nameof(beschreibung));
+this.Betrag = betrag;
+this.Beschreibung = beschreibung;
+this.Benutzer = benutzer;
+aggregate.ArtikelHinzufuegen(command.Betrag, command.Beschreibung, command.Benutzer);
+return Task.CompletedTask;
+this.Artikel = artikel ?? throw new ArgumentNullException(nameof(artikel));
+this.Benutzer = benutzer ?? throw new ArgumentNullException(nameof(benutzer));
+aggregate.ArtikelZuordnen(command.Artikel, command.Benutzer);
+return Task.CompletedTask;
+aggregate.Abbrechen();
+return Task.CompletedTask;
+aggregate.Abschliessen();
+return Task.CompletedTask;
+if (string.IsNullOrWhiteSpace(lieferdienst))
+throw new ArgumentException("Value cannot be null or whitespace.", nameof(lieferdienst));
+this.Lieferdienst = lieferdienst;
+this.Datum = datum;
+aggregate.Beginnen(command.Lieferdienst, command.Datum);
+return Task.CompletedTask;
+this.Bezahlung = bezahlung;
+aggregate.BezahlungAbschliessen(command.Bezahlung.Benutzer);
+return Task.CompletedTask;
+this.Betrag = betrag;
+this.Beschreibung = beschreibung;
+this.Benutzer = benutzer;
+this.ArtikelId = artikelId;
+this.Benutzer = benutzer;
+this.ArtikelId = artikelId;
+this.Artikel = artikel;
+this.Lieferdienst = lieferdienst;
+this.Datum = datum;
+this.Benutzer = benutzer;
+this.Benutzer = benutzer;
+this.Betrag = betrag;
+this.Beschreibung = beschreibung;
+this.Datum = datum;
+if (bezahlung == null) throw new ArgumentNullException(nameof(bezahlung));
+foreach (var uncommittedEvent in aggregate.UncommittedEvents)
+var metadata = (MetadataContainer) uncommittedEvent.Metadata;
+metadata.Add(BezahlungIdMetadataKey, bezahlung.Value);
+return e.Metadata.TryGetValue(BezahlungIdMetadataKey, out string value)
+? new BezahlungId(value)
+: null;
+this.Bestellung = bestellung;
+this.Benutzer = benutzer;
+var match = Regex.Match(value);
+if (!match.Success)
+throw new ArgumentException("Could not parse id.");
+this.Bestellung = new BestellungId(match.Groups[1].Value);
+this.Benutzer = new Benutzer(match.Groups[2].Value);
+this.queryProcessor = queryProcessor;
+this.Register(this.state);
+var angefordert = domainEvent.AggregateEvent;
+var betrag = angefordert.Betrag;
+var beschreibung = angefordert.Beschreibung;
+var benutzer = angefordert.Benutzer;
+var konto = await this.queryProcessor.ProcessAsync(new KontoByBenutzerQuery(benutzer, false),
+cancellationToken);
+this.Emit(new BezahlungBegonnen(beschreibung, betrag));
+if (konto == null)
+this.Publish(new KontoEroeffnenCommand(this.Id));
+else
+this.Emit(new KontoZugeordnet(new KontoId(konto.Id)));
+this.PublishAbbuchenCommand(new KontoId(konto.Id), beschreibung, betrag);
+this.Emit(new BezahlungAbgeschlossen());
+this.Publish(new BezahlungAbschliessenCommand(this.Id));
+this.Complete();
+return Task.CompletedTask;
+var kontoId = domainEvent.AggregateIdentity;
+this.Emit(new KontoZugeordnet(kontoId));
+this.PublishAbbuchenCommand(kontoId, this.state.Beschreibung, this.state.Betrag);
+return Task.CompletedTask;
+var command = new AbbuchenCommand(konto, betrag, beschreibung, this.Id);
+this.Publish(command);
+var e = domainEvent.GetAggregateEvent();
+if (e is BezahlungAngefordert angefordertEvent)
+var bestellung = (BestellungId) domainEvent.GetIdentity();
+ISagaId id = new BezahlungId(bestellung, angefordertEvent.Benutzer);
+return Task.FromResult(id);
+if (e is Abgebucht || e is KontoEroeffnet)
+return Task.FromResult(this.CreateId(domainEvent));
+return Task.FromResult(BezahlungId.Empty);
+var id = domainEvent.TryGetBezahlung();
+return id ?? BezahlungId.Empty;
+this.Beschreibung = aggregateEvent.Beschreibung;
+this.Betrag = aggregateEvent.Betrag;
+this.Betrag = betrag;
+this.Beschreibung = beschreibung;
+this.KontoId = kontoId;
+return string.Join(" ", this.Value
+.Split(' ')
+.Select(token => char.ToUpper(token[0]) + token.Substring(1)));
+if (string.IsNullOrWhiteSpace(value)) throw new ArgumentNullException(nameof(value));
+return value.ToLower();
+if (value <= 0)
+throw new ArgumentOutOfRangeException("Betrag muss größer gleich 0 sein.");
+return new Betrag(value);
+return betrag.Value;
+return this.Value.ToString("F2");
+this.Register(this.state);
+KontoSpecs.NichtAufgeloest
+.And(Specs.Existiert)
+.ThrowDomainErrorIfNotStatisfied(this);
+var neuerSaldo = this.Saldo - betrag;
+this.Emit(new Abgebucht(betrag, neuerSaldo, beschreibung));
+KontoSpecs.Ausgeglichen
+.And(KontoSpecs.NichtAufgeloest)
+.And(Specs.Existiert)
+.ThrowDomainErrorIfNotStatisfied(this);
+this.Emit(new KontoAufgeloest());
+KontoSpecs.NichtAufgeloest
+.And(Specs.Existiert)
+.ThrowDomainErrorIfNotStatisfied(this);
+var neuerSaldo = this.Saldo + betrag;
+this.Emit(new Eingezahlt(betrag, neuerSaldo, einzahlungsart));
+Specs.IstNeu.ThrowDomainErrorIfNotStatisfied(this);
+this.Emit(new KontoEroeffnet(benutzer));
+if (obj.Saldo != 0m)
+yield return string.Format("Saldo {0:F2} ist nicht ausgeglichen.", obj.Saldo);
+if (obj.IstAufgeloest)
+yield return "Konto ist aufgel?st.";
+this.Saldo = aggregateEvent.Saldo;
+this.Saldo = aggregateEvent.Saldo;
+this.IstAufgeloest = true;
+this.Betrag = betrag;
+this.Beschreibung = beschreibung;
+this.Bezahlung = bezahlung;
+aggregate.Abbuchen(command.Betrag, command.Beschreibung);
+if (command.Bezahlung != null)
+aggregate.BezahlungZuordnen(command.Bezahlung);
+return Task.CompletedTask;
+this.Einzahlungsart = einzahlungsart;
+this.Betrag = betrag;
+aggregate.Einzahlen(command.Betrag, command.Einzahlungsart);
+return Task.CompletedTask;
+aggregate.Aufloesen();
+return Task.CompletedTask;
+this.Benutzer = benutzer;
+this.Bezahlung = bezahlung;
+this.queryProcessor = queryProcessor;
+var query = new KontoByBenutzerQuery(command.Benutzer, false);
+if (await this.queryProcessor.ProcessAsync(query, cancellationToken) != null)
+throw DomainError.With($"Konto f?r Benutzer {command.Benutzer} existiert bereits.");
+aggregate.Eroeffnen(command.Benutzer);
+if (command.Bezahlung != null)
+aggregate.BezahlungZuordnen(command.Bezahlung);
+this.queryProcessor = queryProcessor;
+this.bus = bus;
+var benutzer = domainEvent.AggregateEvent.Benutzer;
+var query = new KontoByBenutzerQuery(benutzer);
+try
+await this.queryProcessor.ProcessAsync(query, CancellationToken.None);
+catch (MehrereKontenMitSelbemBenutzerException)
+var id = domainEvent.AggregateIdentity;
+await this.bus.PublishAsync(new KontoAufloesenCommand(id), CancellationToken.None);
+this.Beschreibung = beschreibung;
+this.Einzahlungsart = einzahlungsart;
+this.Benutzer = benutzer;
+this.Betrag = betrag;
+this.Saldo = saldo;
+return typeof(TransaktionEvent).IsAssignableFrom(e.EventType);
+this.Id = artikel.Id.Value;
+this.Beschreibung = artikel.Beschreibung;
+this.Betrag = artikel.Betrag;
+this.Benutzer = artikel.Benutzer;
+return item.Id;
+var zugeordnet = domainEvent.AggregateEvent;
+this.Artikel[zugeordnet.ArtikelId.Value].Benutzer = zugeordnet.Benutzer;
+var artikelEntfernt = domainEvent.AggregateEvent;
+this.Artikel.Remove(artikelEntfernt.ArtikelId.Value);
+var hinzugefuegt = domainEvent.AggregateEvent;
+this.Artikel.Add(new ArtikelReadModel(hinzugefuegt.Artikel));
+this.IstAbgeschlossen = true;
+this.IstAbgeschlossen = true;
+this.Id = domainEvent.AggregateIdentity.Value;
+this.Lieferdienst = domainEvent.AggregateEvent.Lieferdienst;
+this.Datum = domainEvent.AggregateEvent.Datum;
+this.store = store;
+var result = await this.store.FindAsync(b => !b.IstAbgeschlossen, cancellationToken);
+return result;
+this.BenutzerByKontoId.Remove(domainEvent.AggregateIdentity.Value);
+this.BenutzerByKontoId[domainEvent.AggregateIdentity.Value] = domainEvent.AggregateEvent.Benutzer;
+yield return "Benutzer";
+this.store = store;
+var models = await this.store.FindAsync(m => !m.IsAufgeloest, cancellationToken);
+return models;
+this.store = store;
+var readModel = await this.store.GetAsync("Benutzer", cancellationToken);
+return readModel.ReadModel?.Benutzer ?? new Benutzer[0];
+this.Benutzer = benutzer;
+this.ThrowIfNotFound = throwIfNotFound;
+this.store = store;
+var benutzer = query.Benutzer;
+var models = (await this.store.FindAsync(m => m.Benutzer == benutzer && !m.IsAufgeloest, cancellationToken))
+.ToArray();
+switch (models.Length)
+case 0:
+if (query.ThrowIfNotFound)
+throw new Exception("Not found.");
+else return null;
+case 1:
+return models.Single();
+default:
+throw new MehrereKontenMitSelbemBenutzerException();
+this.Saldo = domainEvent.AggregateEvent.Saldo;
+this.LetzteTransaktion = Transaktion.FromEvent(domainEvent);
+this.Saldo = domainEvent.AggregateEvent.Saldo;
+this.LetzteTransaktion = Transaktion.FromEvent(domainEvent);
+this.IsAufgeloest = true;
+this.Id = domainEvent.AggregateIdentity.Value;
+this.Benutzer = domainEvent.AggregateEvent.Benutzer;
+this.Timestamp = timestamp;
+this.Betrag = betrag;
+this.Saldo = saldo;
+this.Beschreibung = beschreibung;
+this.Typ = typ;
+var aggregateEvent = domainEvent.GetAggregateEvent();
+var timestamp = domainEvent.Timestamp;
+switch (aggregateEvent)
+case Eingezahlt eingezahlt:
+return new Transaktion(timestamp, eingezahlt);
+case Abgebucht abgebucht:
+return new Transaktion(timestamp, abgebucht);
+throw new ArgumentException(nameof(domainEvent));
+this.Konto = konto;
+this.eventStore = eventStore;
+var events = await this.eventStore.LoadEventsAsync<KontoAggregate, KontoId>(query.Konto, cancellationToken);
+return events
+.Where(TransaktionEvent.IsTransaktion)
+.Select(Transaktion.FromEvent);
